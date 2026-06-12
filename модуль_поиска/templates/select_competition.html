@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Выбор конкурса — модуль поиска</title>
+    <style>
+        body { font-family: Arial, sans-serif; background:#f5f7fa; margin:0; color:#0b214a; }
+        header { background:white; border-bottom:1px solid #ccd7e6; padding:16px 32px; display:flex; justify-content:space-between; align-items:center; }
+        .brand { font-size:22px; font-weight:700; }
+        .container { max-width:900px; margin:40px auto; background:white; border:1px solid #cbd8ea; border-radius:16px; padding:32px; }
+        h1 { margin-top:0; }
+        .hint { color:#667085; margin-bottom:24px; }
+        select, button, a.btn { width:100%; padding:14px 16px; border-radius:10px; border:1px solid #b9c7dc; font-size:16px; box-sizing:border-box; }
+        button, a.btn { background:#1f3f7a; color:white; cursor:pointer; margin-top:18px; text-align:center; text-decoration:none; display:block; border:none; }
+        a.btn.secondary { background:white; color:#1f3f7a; border:1px solid #1f3f7a; }
+        .card { margin-top:24px; padding:20px; background:#f8fafc; border:1px solid #cbd8ea; border-radius:12px; display:none; }
+        .directions { color:#475467; font-size:14px; line-height:1.5; }
+    </style>
+</head>
+<body>
+<header>
+    <div class="brand">Модуль поиска проектов</div>
+    <a href="http://127.0.0.1:8000/admin/dashboard" style="color:#1f3f7a; text-decoration:none;">Вернуться в админ-панель</a>
+</header>
+<div class="container">
+    <h1>Выбор конкурса</h1>
+    <p class="hint">Конкурсы загружаются из модуля автоматизации. Поиск выполняется по названию, описанию и направлениям выбранного конкурса.</p>
+
+    <label for="competitionSelect">Конкурс</label>
+    <select id="competitionSelect">
+        <option value="">Загрузка конкурсов...</option>
+    </select>
+
+    <div id="competitionCard" class="card"></div>
+
+    <button id="continueBtn" disabled>Выбрать конкурс и перейти к поиску</button>
+    <a class="btn secondary" href="http://127.0.0.1:8000/admin/dashboard">Вернуться в админ-панель</a>
+</div>
+
+<script>
+let competitions = [];
+const select = document.getElementById('competitionSelect');
+const card = document.getElementById('competitionCard');
+const btn = document.getElementById('continueBtn');
+
+function getCompetitionId(c) { return c.external_id || c.id; }
+function cleanId(id) { return String(id || '').replace('external_', ''); }
+
+async function loadCompetitions() {
+    try {
+        const response = await fetch('/api/competitions');
+        competitions = await response.json();
+        select.innerHTML = '<option value="">-- Выберите конкурс --</option>';
+        competitions.forEach(c => {
+            const option = document.createElement('option');
+            option.value = cleanId(getCompetitionId(c));
+            option.textContent = c.title || c.name || `Конкурс ${option.value}`;
+            select.appendChild(option);
+        });
+    } catch (e) {
+        select.innerHTML = '<option value="">Не удалось загрузить конкурсы</option>';
+        card.style.display = 'block';
+        card.innerHTML = 'Проверьте, что модуль автоматизации запущен на http://127.0.0.1:8000';
+    }
+}
+
+select.addEventListener('change', () => {
+    const id = select.value;
+    btn.disabled = !id;
+    const c = competitions.find(x => cleanId(getCompetitionId(x)) === id);
+    if (!c) { card.style.display = 'none'; return; }
+    card.style.display = 'block';
+    const dirs = Array.isArray(c.directions) ? c.directions.join(', ') : (c.directions || '');
+    card.innerHTML = `<h3>${c.title || c.name}</h3>
+        <p>${c.description || ''}</p>
+        <p><strong>Макс. сумма:</strong> ${c.max_amount || c.max_grant || '-'} ₽</p>
+        <p><strong>Срок реализации:</strong> ${c.duration_months || '-'} мес.</p>
+        <p class="directions"><strong>Направления:</strong> ${dirs || '-'}</p>`;
+});
+
+btn.addEventListener('click', () => {
+    const id = select.value;
+    if (!id) return;
+    const returnUrl = encodeURIComponent(`http://127.0.0.1:8000/admin/dashboard?contest_id=${id}`);
+    window.location.href = `/results?external_competition_id=${id}&return_url=${returnUrl}`;
+});
+
+loadCompetitions();
+</script>
+</body>
+</html>

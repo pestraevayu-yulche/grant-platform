@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Автоматическое назначение{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h2>Результаты автоматического назначения</h2>
+        </div>
+
+        {% if results %}
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">{{ results|length }}</div>
+                    <div class="stat-label">Проектов обработано</div>
+                </div>
+            </div>
+
+            {% for result in results %}
+            <div class="result-card" style="margin-bottom: 20px; padding: 20px; background: #f8f9fa; border-radius: 12px;">
+                <h3>{{ result.project_name }}</h3>
+                <p><strong>Назначенные эксперты:</strong></p>
+                <ul>
+                    {% for expert in result.assigned_experts %}
+                    <li>{{ expert }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <p>Нет проектов для автоматического назначения</p>
+            </div>
+        {% endif %}
+
+        <div class="text-center">
+            <a href="/admin/project_experts" class="btn btn-primary">Посмотреть все назначения</a>
+            <a href="/admin/dashboard" class="btn btn-outline">Назад</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

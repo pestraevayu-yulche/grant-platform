@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Вход - Шаг Вперёд{% endblock %}
+
+{% block content %}
+<body>
+    <div class="auth-container">
+        <div class="auth-box">
+            <h2>Вход для экспертов</h2>
+            {% if error %}
+            <div class="alert alert-error">{{ error }}</div>
+            {% endif %}
+            <form method="POST">
+                <input type="email" name="email" placeholder="Email эксперта" required>
+                <input type="password" name="password" placeholder="Пароль" required>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Войти</button>
+            </form>
+            <div class="auth-links">
+                <a href="/expert/register">Нет аккаунта? Зарегистрироваться</a><br>
+                <a href="/">← На главную</a>
+            </div>
+            <div class="auth-links" style="margin-top: 20px;">
+                <a href="/login" class="btn btn-outline" style="display: block; text-align: center;">Вход для заявителей</a>
+            </div>
+        </div>
+    </div>
+</body>
+{% endblock %}

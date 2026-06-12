@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Оценка проекта - {{ project.project_name }}</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .criteria-card {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .score-input {
+            width: 80px;
+            text-align: center;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <h1>Оценка проекта</h1>
+        <a href="/expert/dashboard" style="color: white;">← Назад к списку</a>
+    </header>
+    <div class="container-small">
+        <div class="card">
+            <h2>{{ project.project_name }}</h2>
+            <p style="color: #64748b; margin-bottom: 20px;">Заявитель: {{ project.applicant_name }}</p>
+
+            <div style="margin-bottom: 24px;">
+                <h3>Описание проекта</h3>
+                <p><strong>Краткое описание:</strong> {{ project.summary }}</p>
+                <p><strong>Проблема:</strong> {{ project.problem }}</p>
+                <p><strong>Уникальность:</strong> {{ project.uniqueness }}</p>
+                <p><strong>Запрашиваемая сумма:</strong> {{ "{:,.0f}".format(project.amount) }} ₽</p>
+            </div>
+
+            <form method="POST">
+                <h3>Критерии оценки</h3>
+                {% set criteria = ['Актуальность', 'Новизна', 'Реализуемость', 'Команда', 'Бюджет'] %}
+
+                {% for criterion in criteria %}
+                <div class="criteria-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                        <div>
+                            <h4 style="margin-bottom: 8px;">{{ criterion }}</h4>
+                            <p style="font-size: 13px; color: #64748b;">
+                                {% if criterion == 'Актуальность' %}Важность и своевременность проекта
+                                {% elif criterion == 'Новизна' %}Оригинальность и инновационность решения
+                                {% elif criterion == 'Реализуемость' %}Достижимость поставленных целей
+                                {% elif criterion == 'Команда' %}Квалификация и опыт исполнителей
+                                {% else %}Обоснованность и эффективность бюджета
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <input type="number" name="score_{{ criterion }}"
+                                   value="{{ saved_scores[criterion]['score'] if criterion in saved_scores else '' }}"
+                                   min="0" max="10" step="1" required
+                                   style="width: 80px; padding: 8px; text-align: center; font-size: 16px;">
+                            <span>из 10</span>
+                        </div>
+                    </div>
+                    <div style="margin-top: 12px;">
+                        <label style="font-size: 13px;">Комментарий (необязательно)</label>
+                        <textarea name="comment_{{ criterion }}" rows="2"
+                                  style="width: 100%; margin-top: 4px;">{{ saved_scores[criterion]['comment'] if criterion in saved_scores else '' }}</textarea>
+                    </div>
+                </div>
+                {% endfor %}
+
+                <div class="text-center mt-20">
+                    <button type="submit" class="btn btn-primary">Сохранить оценки</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

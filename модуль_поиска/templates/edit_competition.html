@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редактирование конкурса - Вконкурсе</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f8f9fa;
+            color: #2c3e50;
+        }
+
+        .site-header {
+            background: #ffffff;
+            border-bottom: 1px solid #cbd5e1;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .site-header h1 {
+            font-size: 24px;
+            font-weight: 500;
+            color: #1e3c72;
+        }
+
+        .header-links a {
+            color: #6c757d;
+            text-decoration: none;
+            font-size: 14px;
+            margin-left: 24px;
+        }
+
+        .header-links a:hover {
+            color: #1e3c72;
+        }
+
+        .logout-link {
+            color: #9ca3af !important;
+            border-left: 1px solid #cbd5e1;
+            padding-left: 18px;
+        }
+
+        .logout-link:hover {
+            color: #dc2626 !important;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid #cbd5e1;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #1e3c72;
+        }
+
+        .subtitle {
+            color: #6c757d;
+            font-size: 14px;
+            margin-bottom: 32px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #cbd5e1;
+        }
+
+        .section {
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 20px;
+            color: #1e3c72;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            font-family: inherit;
+            background: #f8f9fa;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #1e3c72;
+            box-shadow: 0 0 0 2px rgba(30, 60, 114, 0.1);
+            background: #ffffff;
+        }
+
+        textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .btn {
+            background: #1e3c72;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            font-size: 15px;
+            font-weight: 500;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .btn:hover {
+            background: #152c55;
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #1e3c72;
+            border: 1px solid #1e3c72;
+            margin-top: 16px;
+        }
+
+        .btn-outline:hover {
+            background: rgba(30, 60, 114, 0.04);
+        }
+
+        .nomination-item {
+            background: #f8f9fa;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .nomination-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            cursor: pointer;
+        }
+
+        .nomination-title {
+            font-weight: 500;
+            color: #1e3c72;
+            font-size: 15px;
+        }
+
+        .nomination-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .remove-nomination {
+            background: none;
+            border: none;
+            color: #dc2626;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 4px 8px;
+        }
+
+        .edit-nomination {
+            background: none;
+            border: none;
+            color: #1e3c72;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 4px 8px;
+        }
+
+        .toggle-nomination {
+            background: none;
+            border: none;
+            color: #1e3c72;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 4px 8px;
+        }
+
+        .nomination-details {
+            display: none;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #cbd5e1;
+        }
+
+        .nomination-details.active {
+            display: block;
+        }
+
+        .add-nomination {
+            background: #f8f9fa;
+            border: 1px dashed #cbd5e1;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            color: #1e3c72;
+            transition: all 0.2s ease;
+            margin-top: 16px;
+        }
+
+        .add-nomination:hover {
+            background: rgba(30, 60, 114, 0.05);
+            border-color: #1e3c72;
+        }
+
+        .form-hint {
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="site-header">
+        <h1>Вконкурсе</h1>
+        <div class="header-links">
+            <a href="/">Выбор конкурса</a>
+            <a href="/create_competition">Создать конкурс</a>
+            <a href="/logout" class="logout-link">Выйти</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <h1>Редактирование конкурса</h1>
+            <div class="subtitle">Измените параметры конкурса</div>
+
+            <form id="editForm">
+                <div class="section">
+                    <div class="section-title">Основная информация</div>
+                    <div class="form-group">
+                        <label>Название конкурса</label>
+                        <input type="text" id="title" value="{{ competition.title }}">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Грантовый фонд (руб.)</label>
+                            <input type="number" id="grantFund" value="{{ competition.grant_fund or '' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Срок реализации (месяцы)</label>
+                            <input type="number" id="duration" value="{{ competition.duration or '' }}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>География реализации</label>
+                        <input type="text" id="geography" value="{{ competition.geography or '' }}">
+                    </div>
+                    <div class="form-group">
+                        <label>Цель конкурса</label>
+                        <textarea id="goal">{{ competition.goal or '' }}</textarea>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">Номинации конкурса</div>
+                    <div id="nominationsContainer"></div>
+                    <div class="add-nomination" onclick="addNomination()">+ Добавить номинацию</div>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">Критерии оценки</div>
+                    <div class="form-group">
+                        <label>Основные критерии</label>
+                        <textarea id="criteria">{{ competition.criteria or '' }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Приоритетные тематики</label>
+                        <textarea id="priorityTopics">{{ competition.priority_topics or '' }}</textarea>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn">Сохранить изменения</button>
+                <button type="button" class="btn btn-outline"
+                    onclick="window.location.href='/results?competition_id={{ competition.id }}'">Отмена</button>
+            </form>
+        </div>
+    </div>
+
+    <script id="initial-nominations-json" type="application/json">{{ competition.nominations | default([], true) | tojson | safe }}</script>
+    <script id="initial-directions-json" type="application/json">{{ competition.directions | default([], true) | tojson | safe }}</script>
+
+    <script>
+        function readJsonFromScript(scriptId, fallbackValue) {
+            const element = document.getElementById(scriptId);
+            if (!element) {
+                return fallbackValue;
+            }
+
+            const raw = element.textContent.trim();
+            if (!raw) {
+                return fallbackValue;
+            }
+
+            try {
+                const parsed = JSON.parse(raw);
+                return parsed === null ? fallbackValue : parsed;
+            } catch (error) {
+                console.error('Не удалось прочитать JSON из ' + scriptId, error);
+                return fallbackValue;
+            }
+        }
+
+        const initialNominations = readJsonFromScript('initial-nominations-json', []);
+        const initialDirections = readJsonFromScript('initial-directions-json', []);
+        let nominations = [];
+
+        if (Array.isArray(initialNominations) && initialNominations.length > 0) {
+            nominations = initialNominations.map(function (item) {
+                if (typeof item === 'string') {
+                    return { name: item, description: '', minAmount: '', maxAmount: '' };
+                }
+                return {
+                    name: item.name || item.title || '',
+                    description: item.description || '',
+                    minAmount: item.minAmount || item.min_amount || item.min_grant || '',
+                    maxAmount: item.maxAmount || item.max_amount || item.max_grant || ''
+                };
+            });
+        } else if (Array.isArray(initialDirections) && initialDirections.length > 0) {
+            nominations = initialDirections.map(function (dir) {
+                return { name: dir, description: '', maxAmount: '', minAmount: '' };
+            });
+        }
+
+        function toggleNomination(index) {
+            const details = document.getElementById('nomination-details-' + index);
+            if (details) {
+                details.classList.toggle('active');
+            }
+        }
+
+        function editNomination(index) {
+            const details = document.getElementById('nomination-details-' + index);
+            if (details) {
+                details.classList.add('active');
+                details.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        function updateNominationTitle(index) {
+            const nameInput = document.getElementById('nom-name-' + index);
+            const titleSpan = document.getElementById('nom-title-' + index);
+            if (nameInput && titleSpan) {
+                const newTitle = nameInput.value.trim();
+                if (newTitle) {
+                    titleSpan.textContent = newTitle;
+                } else {
+                    titleSpan.textContent = 'Новая номинация';
+                }
+            }
+        }
+
+        function removeNomination(index) {
+            if (confirm('Удалить эту номинацию?')) {
+                nominations.splice(index, 1);
+                renderNominations();
+            }
+        }
+
+        function renderNominations() {
+            const container = document.getElementById('nominationsContainer');
+            if (!container) return;
+            container.innerHTML = '';
+
+            for (let idx = 0; idx < nominations.length; idx++) {
+                const nom = nominations[idx];
+                const displayTitle = nom.name && nom.name.trim() ? nom.name : 'Новая номинация';
+
+                const div = document.createElement('div');
+                div.className = 'nomination-item';
+                div.innerHTML = `
+                    <div class="nomination-header" onclick="toggleNomination(${idx})">
+                        <span class="nomination-title" id="nom-title-${idx}">${escapeHtml(displayTitle)}</span>
+                        <div class="nomination-actions">
+                            <button type="button" class="edit-nomination" onclick="event.stopPropagation(); editNomination(${idx})" title="Редактировать">✎</button>
+                            <button type="button" class="toggle-nomination" onclick="event.stopPropagation(); toggleNomination(${idx})" title="Развернуть/Свернуть">▼</button>
+                            <button type="button" class="remove-nomination" onclick="event.stopPropagation(); removeNomination(${idx})" title="Удалить">×</button>
+                        </div>
+                    </div>
+                    <div class="nomination-details" id="nomination-details-${idx}">
+                        <div class="form-group">
+                            <label>Название номинации</label>
+                            <input type="text" id="nom-name-${idx}" class="nom-name" value="${escapeHtml(nom.name || '')}" onchange="updateNominationTitle(${idx})">
+                        </div>
+                        <div class="form-group">
+                            <label>Описание номинации (ключевые слова для поиска)</label>
+                            <textarea id="nom-desc-${idx}" class="nom-desc" rows="3">${escapeHtml(nom.description || '')}</textarea>
+                            <div class="form-hint">Система будет использовать это описание для оценки релевантности проектов</div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Максимальная сумма гранта (руб.)</label>
+                                <input type="number" id="nom-max-${idx}" class="nom-max" value="${nom.maxAmount || ''}">
+                            </div>
+                            <div class="form-group">
+                                <label>Минимальная сумма гранта (руб.)</label>
+                                <input type="number" id="nom-min-${idx}" class="nom-min" value="${nom.minAmount || ''}">
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(div);
+            }
+
+            // Кнопка добавления номинации внизу
+            const addDiv = document.createElement('div');
+            addDiv.className = 'add-nomination';
+            addDiv.innerHTML = '+ Добавить номинацию';
+            addDiv.onclick = function () { addNomination(); };
+            container.appendChild(addDiv);
+        }
+
+        function addNomination() {
+            nominations.push({
+                name: '',
+                description: '',
+                maxAmount: '',
+                minAmount: ''
+            });
+            renderNominations();
+            // Автоматически открываем добавленную номинацию
+            setTimeout(function () {
+                const lastIndex = nominations.length - 1;
+                const details = document.getElementById('nomination-details-' + lastIndex);
+                if (details) {
+                    details.classList.add('active');
+                }
+                const nameInput = document.getElementById('nom-name-' + lastIndex);
+                if (nameInput) {
+                    nameInput.focus();
+                }
+            }, 100);
+        }
+
+        function collectNominationsFromInputs() {
+            for (let idx = 0; idx < nominations.length; idx++) {
+                const nameInput = document.getElementById('nom-name-' + idx);
+                const descTextarea = document.getElementById('nom-desc-' + idx);
+                const maxInput = document.getElementById('nom-max-' + idx);
+                const minInput = document.getElementById('nom-min-' + idx);
+
+                if (nameInput) nominations[idx].name = nameInput.value;
+                if (descTextarea) nominations[idx].description = descTextarea.value;
+                if (maxInput) nominations[idx].maxAmount = maxInput.value;
+                if (minInput) nominations[idx].minAmount = minInput.value;
+            }
+            // Удаляем пустые номинации (без названия)
+            nominations = nominations.filter(function (nom) {
+                return nom.name && nom.name.trim() !== '';
+            });
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function (m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        document.getElementById('editForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            collectNominationsFromInputs();
+
+            // Обновляем directions для обратной совместимости
+            const directionsList = nominations.filter(function (n) {
+                return n.name && n.name.trim() !== '';
+            }).map(function (n) {
+                return n.name;
+            });
+
+            const formData = {
+                title: document.getElementById('title').value,
+                grant_fund: document.getElementById('grantFund').value,
+                duration: document.getElementById('duration').value,
+                geography: document.getElementById('geography').value,
+                goal: document.getElementById('goal').value,
+                criteria: document.getElementById('criteria').value,
+                priority_topics: document.getElementById('priorityTopics').value,
+                directions: directionsList,
+                nominations: nominations
+            };
+
+            try {
+                const response = await fetch('/api/competitions/{{ competition.id }}', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    alert('Конкурс успешно обновлён');
+                    window.location.href = '/results?competition_id={{ competition.id }}';
+                } else {
+                    alert('Ошибка при обновлении: ' + (result.error || 'Неизвестная ошибка'));
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                alert('Ошибка при сохранении изменений');
+            }
+        });
+
+        renderNominations();
+    </script>
+</body>
+
+</html>

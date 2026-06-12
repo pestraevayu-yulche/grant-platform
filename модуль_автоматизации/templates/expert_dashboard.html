@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block title %}Панель эксперта - ВКонкурсе{% endblock %}
+
+{% block content %}
+<div class="expert-dashboard">
+    <div class="container">
+        <!-- Информация об эксперте -->
+        <div class="expert-info-card">
+            <div class="expert-avatar">
+                <i class="fas fa-user-circle"></i>
+            </div>
+            <div class="expert-info">
+                <h2>{{ session.expert_name }}</h2>
+                <p><i class="fas fa-envelope"></i> {{ session.expert_email or 'email@example.com' }}</p>
+                <a href="/expert/profile" class="btn btn-outline btn-sm">
+                    <i class="fas fa-user-edit"></i> Редактировать профиль
+                </a>
+            </div>
+        </div>
+
+        <!-- Блок уведомлений о необходимости пересмотра -->
+        {% if notifications %}
+        <div class="card" style="border-left: 4px solid #e8c9b0; margin-bottom: 20px;">
+            <div class="card-header">
+                <h3><i class="fas fa-bell"></i> Внимание! Требуется пересмотр оценок</h3>
+            </div>
+            {% for notification in notifications %}
+            <div style="background: #fff8f0; padding: 15px; margin-bottom: 10px; border-radius: 8px;">
+                <p><strong>Проект:</strong> {{ notification.project_name }}</p>
+                <p><strong>Критерий:</strong> {{ notification.criteria }}</p>
+                <p><strong>Ваша оценка:</strong> {{ notification.current_score }} / 10</p>
+                <p><strong>Средняя оценка других экспертов:</strong> {{ notification.recommended_score }} / 10</p>
+                <p>Рекомендуется пересмотреть оценку для согласованности с коллегами.</p>
+                <a href="/expert/evaluate/{{ notification.project_expert_id }}" class="btn btn-primary">Пересмотреть оценки</a>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="card">
+            <div class="card-header">
+                <h2>Проекты для оценки</h2>
+                <span class="status-badge status-review">Всего: {{ projects|length }}</span>
+            </div>
+
+            {% if projects %}
+                {% for project in projects %}
+                <div class="project-card">
+                    <div class="project-header">
+                        <h3>{{ project.project_name }}</h3>
+                        <span class="status-badge
+                            {% if project.status == 'pending' %}status-review
+                            {% elif project.status == 'in_progress' %}status-approved
+                            {% else %}status-approved{% endif %}">
+                            {% if project.status == 'pending' %}Ожидает оценки
+                            {% elif project.status == 'in_progress' %}В процессе
+                            {% else %}Оценен{% endif %}
+                        </span>
+                    </div>
+                    <p style="font-size: 14px; color: #64748b; margin-bottom: 8px;">
+                        <i class="fas fa-user"></i> Заявитель: {{ project.applicant_name }}
+                    </p>
+                    <p style="font-size: 14px; color: #64748b; margin-bottom: 16px;">
+                        <i class="fas fa-tag"></i> Направление: {{ project.direction }}
+                    </p>
+
+                    <div class="project-actions">
+                        {% if project.has_scores %}
+                            <a href="/expert/evaluate/{{ project.project_expert_id }}" class="btn btn-outline">
+                                <i class="fas fa-edit"></i> Редактировать оценки
+                            </a>
+                        {% else %}
+                            <a href="/expert/evaluate/{{ project.project_expert_id }}" class="btn btn-primary">
+                                <i class="fas fa-star"></i> Оценить проект
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-check-circle" style="font-size: 48px; color: #a8c9a8;"></i>
+                    <p>Нет проектов для оценки</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.expert-info-card {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 24px;
+    border: 1px solid #e2e8f0;
+}
+
+.expert-avatar i {
+    font-size: 64px;
+    color: #7c9bc0;
+}
+
+.expert-info h2 {
+    margin: 0 0 8px 0;
+}
+
+.expert-info p {
+    margin: 0 0 12px 0;
+    color: #64748b;
+}
+
+.project-card {
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+    transition: all 0.2s;
+    border: 1px solid #e2e8f0;
+}
+
+.project-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transform: translateY(-2px);
+}
+
+.project-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+
+.project-header h3 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.project-actions {
+    margin-top: 16px;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #64748b;
+}
+
+.empty-state p {
+    margin-top: 16px;
+}
+</style>
+{% endblock %}

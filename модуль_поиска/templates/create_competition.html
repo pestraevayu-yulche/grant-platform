@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создание конкурса - Вконкурсе</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f8f9fa;
+            color: #2c3e50;
+        }
+
+        .site-header {
+            background: #ffffff;
+            border-bottom: 1px solid #cbd5e1;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .site-header h1 {
+            font-size: 24px;
+            font-weight: 500;
+            color: #1e3c72;
+            letter-spacing: -0.3px;
+        }
+
+        .header-links {
+            display: flex;
+            gap: 24px;
+        }
+
+        .header-links a {
+            color: #6c757d;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.2s ease;
+        }
+
+        .header-links a:hover {
+            color: #1e3c72;
+        }
+
+        .logout-link {
+            color: #9ca3af !important;
+            border-left: 1px solid #cbd5e1;
+            padding-left: 18px;
+        }
+
+        .logout-link:hover {
+            color: #dc2626 !important;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid #cbd5e1;
+            transition: box-shadow 0.2s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #1e3c72;
+        }
+
+        .subtitle {
+            color: #6c757d;
+            font-size: 14px;
+            margin-bottom: 32px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #cbd5e1;
+        }
+
+        .section {
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 20px;
+            color: #1e3c72;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+
+        .required {
+            color: #dc2626;
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            font-family: inherit;
+            background: #f8f9fa;
+            transition: all 0.2s ease;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #1e3c72;
+            box-shadow: 0 0 0 2px rgba(30, 60, 114, 0.1);
+            background: #ffffff;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .form-hint {
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 6px;
+        }
+
+        .btn {
+            background: #1e3c72;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            font-size: 15px;
+            font-weight: 500;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .btn:hover {
+            background: #152c55;
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #1e3c72;
+            border: 1px solid #1e3c72;
+            margin-top: 16px;
+        }
+
+        .btn-outline:hover {
+            background: rgba(30, 60, 114, 0.04);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            margin-top: 0;
+            width: auto;
+            padding: 8px 16px;
+            font-size: 13px;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .nominations-container {
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            padding: 20px;
+            background: #fafafa;
+            margin-bottom: 16px;
+        }
+
+        .nomination-item {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .nomination-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            cursor: pointer;
+        }
+
+        .nomination-title {
+            font-weight: 500;
+            color: #1e3c72;
+        }
+
+        .remove-nomination {
+            background: none;
+            border: none;
+            color: #dc2626;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 4px 8px;
+        }
+
+        .nomination-details {
+            display: none;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #cbd5e1;
+        }
+
+        .nomination-details.active {
+            display: block;
+        }
+
+        .add-nomination {
+            background: #f8f9fa;
+            border: 1px dashed #cbd5e1;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #1e3c72;
+        }
+
+        .add-nomination:hover {
+            background: rgba(30, 60, 114, 0.05);
+            border-color: #1e3c72;
+        }
+
+        .file-upload {
+            border: 2px dashed #cbd5e1;
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: #fafafa;
+        }
+
+        .file-upload:hover {
+            border-color: #1e3c72;
+            background: rgba(30, 60, 114, 0.02);
+        }
+
+        .file-info {
+            margin-top: 12px;
+            font-size: 12px;
+            color: #28a745;
+        }
+
+        .budget-row {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .budget-row input {
+            flex: 1;
+        }
+
+        .budget-row button {
+            background: #dc2626;
+            padding: 8px 16px;
+            width: auto;
+            margin: 0;
+        }
+
+        .budget-items {
+            margin-top: 16px;
+        }
+
+        .total-budget {
+            margin-top: 16px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            font-weight: 500;
+            text-align: right;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="site-header">
+        <h1>Вконкурсе</h1>
+        <div class="header-links">
+            <a href="/">Выбор конкурса</a>
+            <a href="/create_competition">Создать конкурс</a>
+            <a href="/logout" class="logout-link">Выйти</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <h1>Создание грантового конкурса</h1>
+            <div class="subtitle">Заполните положение о конкурсе для точного поиска и оценки проектов</div>
+
+            <form id="competitionForm" enctype="multipart/form-data">
+                <!-- Основная информация -->
+                <div class="section">
+                    <div class="section-title">
+                        <span>Основная информация</span>
+                    </div>
+                    <div class="form-group">
+                        <label>Название конкурса <span class="required">*</span></label>
+                        <input type="text" id="title" name="title" placeholder="Например: Молодые инноваторы 2026"
+                            required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Грантовый фонд (руб.)</label>
+                            <input type="number" id="grantFund" name="grant_fund" placeholder="1 000 000">
+                        </div>
+                        <div class="form-group">
+                            <label>Срок реализации (месяцы)</label>
+                            <input type="number" id="duration" name="duration" placeholder="12">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>География реализации</label>
+                        <input type="text" id="geography" name="geography"
+                            placeholder="Например: Москва, Московская область, вся Россия">
+                        <div class="form-hint">Укажите регионы, в которых могут реализовываться проекты</div>
+                    </div>
+                    <div class="form-group">
+                        <label>Цель конкурса</label>
+                        <textarea id="goal" name="goal" placeholder="Опишите основную цель конкурса..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Участники и условия -->
+                <div class="section">
+                    <div class="section-title">
+                        <span>Участники и условия</span>
+                    </div>
+                    <div class="form-group">
+                        <label>Кто может участвовать</label>
+                        <textarea id="participants" name="participants"
+                            placeholder="Физические лица, юридические лица, НКО, государственные учреждения..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Условия участия</label>
+                        <textarea id="conditions" name="conditions"
+                            placeholder="Ограничения по количеству заявок, требования к оформлению..."></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Начало приёма заявок</label>
+                            <input type="date" id="startDate" name="start_date">
+                        </div>
+                        <div class="form-group">
+                            <label>Окончание приёма заявок</label>
+                            <input type="date" id="endDate" name="end_date">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Номинации / Направления -->
+                <div class="section">
+                    <div class="section-title">
+                        <span>Номинации конкурса</span>
+                    </div>
+                    <div class="form-hint" style="margin-bottom: 16px;">Добавьте номинации/направления. Именно по ним
+                        система будет оценивать релевантность проектов</div>
+                    <div id="nominationsContainer" class="nominations-container">
+                        <div id="nominationsList"></div>
+                        <div class="add-nomination" onclick="addNomination()">
+                            + Добавить номинацию
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Бюджетные ограничения -->
+                <div class="section">
+                    <div class="section-title">
+                        <span>Бюджетные ограничения</span>
+                    </div>
+                    <div class="form-group">
+                        <label>Максимальная сумма гранта на один проект (руб.)</label>
+                        <input type="number" id="maxGrant" name="max_grant" placeholder="500 000">
+                    </div>
+                    <div class="form-group">
+                        <label>Минимальный собственный вклад (%)</label>
+                        <input type="number" id="ownContribution" name="own_contribution" placeholder="25">
+                        <div class="form-hint">Процент от запрашиваемой суммы, который должен внести заявитель</div>
+                    </div>
+                    <div class="form-group">
+                        <label>Ограничения по бюджету</label>
+                        <textarea id="budgetLimits" name="budget_limits"
+                            placeholder="Например: заработная плата не более 30%, ремонт не более 30%..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Критерии оценки -->
+                <div class="section">
+                    <div class="section-title">
+                        <span>Критерии оценки проектов</span>
+                    </div>
+                    <div class="form-group">
+                        <label>Основные критерии</label>
+                        <textarea id="criteria" name="criteria"
+                            placeholder="Актуальность, новизна, социальная значимость, масштабируемость..."></textarea>
+                        <div class="form-hint">Эти критерии будут использоваться при семантическом анализе релевантности
+                            проектов</div>
+                    </div>
+                </div>
+
+                <!-- Детальное описание конкурса -->
+                <div class="section">
+                    <div class="section-title">
+                        <span>Детальное описание конкурса</span>
+                    </div>
+                    <div class="form-group">
+                        <label>Проблема, которую решает конкурс</label>
+                        <textarea id="problem" name="problem"
+                            placeholder="Опишите, какая проблема существует и почему её необходимо решить..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Ожидаемые результаты конкурса</label>
+                        <textarea id="expectedResults" name="expected_results"
+                            placeholder="Какие результаты планируется достичь по итогам конкурса..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Приоритетные тематики</label>
+                        <textarea id="priorityTopics" name="priority_topics"
+                            placeholder="Например: цифровые технологии, медицинские инновации, экологические проекты..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Загрузка файла с положением -->
+                <div class="section">
+                    <div class="section-title">
+                        <span>Загрузка положения о конкурсе</span>
+                    </div>
+                    <div class="file-upload" onclick="document.getElementById('fileInput').click()">
+                        📄 Нажмите для загрузки файла или перетащите его сюда
+                        <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.txt,.json" style="display: none;">
+                    </div>
+                    <div id="fileInfo" class="file-info" style="display: none;"></div>
+                    <div class="form-hint">Поддерживаемые форматы: PDF, DOC, DOCX, TXT, JSON. Система проанализирует
+                        содержимое файла и извлечёт ключевые критерии для оценки релевантности.</div>
+                </div>
+
+                <button type="submit" class="btn">Создать конкурс и перейти к поиску</button>
+                <button type="button" class="btn btn-outline" onclick="window.location.href='/'">Назад к выбору
+                    конкурса</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let nominationCount = 0;
+        let nominations = [];
+
+        function addNomination() {
+            nominationCount++;
+            const nominationId = `nom_${nominationCount}`;
+            nominations.push({
+                id: nominationId,
+                name: '',
+                description: '',
+                maxAmount: '',
+                minAmount: ''
+            });
+
+            const container = document.getElementById('nominationsList');
+            const nominationDiv = document.createElement('div');
+            nominationDiv.className = 'nomination-item';
+            nominationDiv.id = nominationId;
+            nominationDiv.innerHTML = `
+                <div class="nomination-header" onclick="toggleNomination('${nominationId}')">
+                    <span class="nomination-title">Новая номинация</span>
+                    <button type="button" class="remove-nomination" onclick="event.stopPropagation(); removeNomination('${nominationId}')">×</button>
+                </div>
+                <div class="nomination-details" id="details_${nominationId}">
+                    <div class="form-group">
+                        <label>Название номинации</label>
+                        <input type="text" class="nom-name" data-id="${nominationId}" placeholder="Например: Цифровые технологии" onchange="updateNomination('${nominationId}')">
+                    </div>
+                    <div class="form-group">
+                        <label>Описание номинации (ключевые слова для поиска)</label>
+                        <textarea class="nom-desc" data-id="${nominationId}" rows="3" placeholder="Опишите, какие проекты подходят под эту номинацию, ключевые темы и направления..." onchange="updateNomination('${nominationId}')"></textarea>
+                        <div class="form-hint">Система будет использовать это описание для семантической оценки релевантности проектов</div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Максимальная сумма гранта (руб.)</label>
+                            <input type="number" class="nom-max" data-id="${nominationId}" placeholder="1 000 000" onchange="updateNomination('${nominationId}')">
+                        </div>
+                        <div class="form-group">
+                            <label>Минимальная сумма гранта (руб.)</label>
+                            <input type="number" class="nom-min" data-id="${nominationId}" placeholder="100 000" onchange="updateNomination('${nominationId}')">
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(nominationDiv);
+        }
+
+        function toggleNomination(nominationId) {
+            const details = document.getElementById(`details_${nominationId}`);
+            details.classList.toggle('active');
+        }
+
+        function updateNomination(nominationId) {
+            const nameInput = document.querySelector(`.nom-name[data-id="${nominationId}"]`);
+            const descInput = document.querySelector(`.nom-desc[data-id="${nominationId}"]`);
+            const maxInput = document.querySelector(`.nom-max[data-id="${nominationId}"]`);
+            const minInput = document.querySelector(`.nom-min[data-id="${nominationId}"]`);
+            const headerTitle = document.querySelector(`#${nominationId} .nomination-title`);
+
+            const nomination = nominations.find(n => n.id === nominationId);
+            if (nomination) {
+                nomination.name = nameInput ? nameInput.value : '';
+                nomination.description = descInput ? descInput.value : '';
+                nomination.maxAmount = maxInput ? maxInput.value : '';
+                nomination.minAmount = minInput ? minInput.value : '';
+                if (headerTitle && nomination.name) {
+                    headerTitle.textContent = nomination.name;
+                }
+            }
+        }
+
+        function removeNomination(nominationId) {
+            const nominationDiv = document.getElementById(nominationId);
+            if (nominationDiv) {
+                nominationDiv.remove();
+                nominations = nominations.filter(n => n.id !== nominationId);
+            }
+        }
+
+        async function analyzeDocument(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const content = e.target.result;
+                    resolve({
+                        fileName: file.name,
+                        fileSize: file.size,
+                        content: content.substring(0, 5000)
+                    });
+                };
+                reader.readAsText(file);
+            });
+        }
+
+        document.getElementById('fileInput').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const fileInfo = document.getElementById('fileInfo');
+                fileInfo.style.display = 'block';
+                fileInfo.innerHTML = `Файл "${file.name}" загружен. Система проанализирует его при создании конкурса.`;
+
+                const fileData = await analyzeDocument(file);
+                sessionStorage.setItem('uploadedDocument', JSON.stringify(fileData));
+            }
+        });
+
+        document.getElementById('competitionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = {
+                title: document.getElementById('title').value,
+                grant_fund: document.getElementById('grantFund').value,
+                duration: document.getElementById('duration').value,
+                geography: document.getElementById('geography').value,
+                goal: document.getElementById('goal').value,
+                participants: document.getElementById('participants').value,
+                conditions: document.getElementById('conditions').value,
+                start_date: document.getElementById('startDate').value,
+                end_date: document.getElementById('endDate').value,
+                nominations: nominations.filter(n => n.name && n.description),
+                max_grant: document.getElementById('maxGrant').value,
+                own_contribution: document.getElementById('ownContribution').value,
+                budget_limits: document.getElementById('budgetLimits').value,
+                criteria: document.getElementById('criteria').value,
+                problem: document.getElementById('problem').value,
+                expected_results: document.getElementById('expectedResults').value,
+                priority_topics: document.getElementById('priorityTopics').value,
+                has_document: !!sessionStorage.getItem('uploadedDocument')
+            };
+
+            // Собираем также тематику для обратной совместимости
+            const allTopics = [];
+            nominations.forEach(n => {
+                if (n.name) allTopics.push(n.name);
+                if (n.description) allTopics.push(n.description.substring(0, 100));
+            });
+            formData.topic = allTopics.join(', ');
+            formData.directions = nominations.filter(n => n.name).map(n => n.name);
+
+            try {
+                const response = await fetch('/api/competitions', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                const result = await response.json();
+
+                if (result.id) {
+                    sessionStorage.setItem('competitionCriteria', JSON.stringify({
+                        nominations: nominations,
+                        criteria: formData.criteria,
+                        problem: formData.problem,
+                        expected_results: formData.expected_results,
+                        priority_topics: formData.priority_topics
+                    }));
+                    window.location.href = `/results?competition_id=${result.id}&mode=external`;
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                alert('Ошибка при создании конкурса');
+            }
+        });
+    </script>
+</body>
+
+</html>

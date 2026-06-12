@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}Подать заявку на грант{% endblock %}
+
+{% block content %}
+<div class="container-small">
+    <div class="card application-form">
+        <div class="card-header">
+            <h2>Подача заявки на грант</h2>
+            <span class="status-badge status-review">Шаг Вперёд</span>
+        </div>
+
+        <form method="POST" action="/apply" enctype="multipart/form-data">
+            <!-- Выбор конкурса -->
+            <div class="form-section">
+                <h3>Выбор конкурса</h3>
+                <div class="contest-selector">
+                    <label class="contest-option">
+                        <input type="radio" name="contest" value="Культурный код" required>
+                        <div class="contest-option-content">
+                            <div>
+                                <strong>Культурный код</strong>
+                                <small>Гранты на проекты в сфере культуры</small>
+                            </div>
+                        </div>
+                    </label>
+                    <label class="contest-option">
+                        <input type="radio" name="contest" value="Социальное действие" required>
+                        <div class="contest-option-content">
+                            <div>
+                                <strong>Социальное действие</strong>
+                                <small>Гранты на социально значимые проекты</small>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Информация о заявителе -->
+            <div class="form-section">
+                <h3>Информация о заявителе</h3>
+                <div class="form-group">
+                    <label>ФИО полностью <span class="required">*</span></label>
+                    <input type="text" name="full_name" required placeholder="Иванов Иван Иванович">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Email <span class="required">*</span></label>
+                        <input type="email" name="email" required placeholder="ivanov@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Телефон <span class="required">*</span></label>
+                        <input type="tel" name="phone" required placeholder="+7 (XXX) XXX-XX-XX">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Регион <span class="required">*</span></label>
+                    <input type="text" name="region" required placeholder="Московская область">
+                </div>
+                <div class="form-group">
+                    <label>Организация (если есть)</label>
+                    <input type="text" name="organization" placeholder="Название организации">
+                </div>
+            </div>
+
+            <!-- Информация о проекте -->
+            <div class="form-section">
+                <h3>Информация о проекте</h3>
+                <div class="form-group">
+                    <label>Название проекта <span class="required">*</span></label>
+                    <input type="text" name="project_name" required placeholder="Название вашего проекта">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Запрашиваемая сумма <span class="required">*</span></label>
+                        <input type="number" name="amount" required placeholder="0 ₽" step="1000">
+                    </div>
+                    <div class="form-group">
+                        <label>Команда проекта</label>
+                        <input type="number" name="team_size" value="2" min="1">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Срок реализации (месяцев)</label>
+                    <input type="number" name="duration" value="12" min="1" max="24">
+                </div>
+            </div>
+
+            <!-- Описание проекта -->
+            <div class="form-section">
+                <h3>Описание проекта</h3>
+                <div class="form-group">
+                    <label>Краткое описание <span class="required">*</span></label>
+                    <textarea name="summary" required placeholder="Опишите суть проекта в 2-3 предложениях..." rows="3"></textarea>
+                    <small class="form-hint">Рекомендуемый объем: 100-300 символов</small>
+                </div>
+                <div class="form-group">
+                    <label>Проблема, которую решает проект <span class="required">*</span></label>
+                    <textarea name="problem" required placeholder="Какая существует проблема? Почему её необходимо решить?" rows="4"></textarea>
+                    <small class="form-hint">Рекомендуемый объем: 200-500 символов</small>
+                </div>
+                <div class="form-group">
+                    <label>Целевая аудитория</label>
+                    <textarea name="audience" placeholder="Для кого предназначен проект?" rows="2"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Уникальность решения</label>
+                    <textarea name="uniqueness" placeholder="Чем ваш проект отличается от существующих аналогов?" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>План реализации</label>
+                    <textarea name="plan" placeholder="Опишите основные этапы реализации проекта" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Ожидаемые результаты</label>
+                    <textarea name="results" placeholder="Какие результаты планируется достичь?" rows="3"></textarea>
+                </div>
+            </div>
+
+            <!-- Согласие на обработку данных -->
+<div class="form-section">
+    <h3>Согласие на обработку данных</h3>
+    <div class="checkbox-group">
+        <label class="checkbox-label">
+            <input type="checkbox" name="consent" required>
+            <span class="checkbox-text">
+                Я даю согласие на обработку моих персональных данных в соответствии с
+                <a href="#" target="_blank">Политикой обработки персональных данных</a>
+            </span>
+        </label>
+    </div>
+    <small class="form-hint">Согласие требуется для участия в грантовом конкурсе</small>
+</div>
+
+</div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-large">Подать заявку</button>
+                <a href="/" class="btn btn-outline">Отмена</a>
+            </div>
+        </form>
+</div>
+{% endblock %}

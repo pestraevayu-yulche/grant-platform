@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+
+{% block title %}Отчет AI проверки заявок - ВКонкурсе{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Хлебные крошки -->
+    <div class="breadcrumbs">
+        <a href="/admin/dashboard?contest_id={{ request.args.get('contest_id', '') }}">← Назад к панели</a>
+        <span>/</span>
+        <span>AI проверка</span>
+    </div>
+
+    <!-- Статистика -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-number">{{ total }}</div>
+            <div class="stat-label">Всего проверено</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">
+                {{ results|selectattr('new_status', 'equalto', 'Одобрено')|list|length }}
+            </div>
+            <div class="stat-label">Одобрено автоматически</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">
+                {{ results|selectattr('new_status', 'equalto', 'Отклонено')|list|length }}
+            </div>
+            <div class="stat-label">Отклонено</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">
+                {{ results|selectattr('new_status', 'equalto', 'На рассмотрении')|list|length }}
+            </div>
+            <div class="stat-label">Требуют ручной проверки</div>
+        </div>
+    </div>
+
+    <!-- Кнопки экспорта -->
+    <div class="action-buttons">
+        <a href="/admin/export_report/excel?contest_id={{ request.args.get('contest_id', '') }}" class="btn btn-success">
+            <i class="fas fa-file-excel"></i> Скачать отчет Excel
+        </a>
+        <a href="/admin/export_report/pdf?contest_id={{ request.args.get('contest_id', '') }}" class="btn btn-primary">
+            <i class="fas fa-file-pdf"></i> Скачать отчет PDF
+        </a>
+    </div>
+
+    <!-- Результаты проверки -->
+    {% if results %}
+    <div class="applications-list">
+        {% for app in results %}
+        <div class="application-card">
+            <div class="card-header">
+                <div>
+                    <span class="app-title">{{ app.project_name }}</span>
+                    <span class="app-id">ID: {{ app.id }}</span>
+                    <div class="status-change">
+                        <i class="fas fa-exchange-alt"></i> Статус изменен с "{{ app.old_status }}" на новый
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <span class="score-badge">Балл: {{ app.score }}</span>
+                    <span class="status-badge
+                        {% if app.new_status == 'Одобрено' %}status-approved
+                        {% elif app.new_status == 'Отклонено' %}status-rejected
+                        {% else %}status-review{% endif %}">
+                        {{ app.new_status }}
+                    </span>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="score-section">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span>Общий балл качества</span>
+                        <span><strong>{{ app.score }}%</strong></span>
+                    </div>
+                    <div class="score-bar">
+                        <div class="score-bar-fill" style="width: {{ app.score }}%"></div>
+                    </div>
+                </div>
+
+                <div class="stats-row">
+                    <div class="stat-item">
+                        <div class="stat-value">{{ app.summary.valid_fields }}</div>
+                        <div class="stat-label-small">Заполнено корректно</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">{{ app.summary.warning_fields }}</div>
+                        <div class="stat-label-small">Требуют внимания</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">{{ app.summary.error_fields }}</div>
+                        <div class="stat-label-small">Содержат ошибки</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">{{ app.summary.total_fields }}</div>
+                        <div class="stat-label-small">Всего полей</div>
+                    </div>
+                </div>
+
+                {% if app.recommendations %}
+                <div class="recommendations">
+                    <div class="recommendations-title">Рекомендации по доработке</div>
+                    <ul class="recommendations-list">
+                        {% for rec in app.recommendations %}
+                        <li>{{ rec }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                <div class="text-right">
+                    <a href="/admin/application/{{ app.id }}" class="btn btn-sm btn-outline">
+                        Подробнее <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-check-circle" style="font-size: 64px; color: #a8c9a8;"></i>
+        <h3>Нет заявок для проверки</h3>
+        <p>Все заявки уже проверены или отсутствуют</p>
+        <a href="/admin/dashboard?contest_id={{ request.args.get('contest_id', '') }}" class="btn btn-primary">
+            Вернуться к панели
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.breadcrumbs {
+    margin-bottom: 24px;
+    padding: 12px 0;
+    color: #64748b;
+}
+.breadcrumbs a {
+    color: #7c9bc0;
+    text-decoration: none;
+}
+.breadcrumbs a:hover {
+    text-decoration: underline;
+}
+.score-badge {
+    background: #1e3c72;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+}
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    background: white;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+}
+.empty-state h3 {
+    margin: 20px 0 10px;
+}
+.empty-state p {
+    color: #64748b;
+    margin-bottom: 24px;
+}
+</style>
+{% endblock %}

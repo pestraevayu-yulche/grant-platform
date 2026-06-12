@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block title %}Заявка #{{ app.id }} - Подробнее{% endblock %}
+
+{% block content %}
+<div class="container-small">
+    <div class="back-link">
+        <a href="/admin/dashboard" class="btn btn-sm btn-outline">← Назад к списку</a>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h2>Заявка №{{ app.id }}</h2>
+            <span class="status-badge
+                {% if app.status == 'Одобрено' %}status-approved
+                {% elif app.status == 'Отклонено' %}status-rejected
+                {% else %}status-review{% endif %}">
+                {{ app.status }}
+            </span>
+        </div>
+
+        <!-- Информация о заявителе -->
+        <div class="detail-section">
+            <h3>Информация о заявителе</h3>
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <span class="detail-label">ФИО:</span>
+                    <span class="detail-value">{{ app.full_name }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Email:</span>
+                    <span class="detail-value">{{ app.email or 'Не указан' }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Логин:</span>
+                    <span class="detail-value">{{ app.username }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Дата подачи:</span>
+                    <span class="detail-value">{{ app.created_at.strftime('%d.%m.%Y %H:%M') if app.created_at else '-' }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Информация о проекте -->
+        <div class="detail-section">
+            <h3>Информация о проекте</h3>
+            <div class="detail-grid">
+                <div class="detail-item full-width">
+                    <span class="detail-label">Название проекта:</span>
+                    <span class="detail-value"><strong>{{ app.project_name }}</strong></span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Направление:</span>
+                    <span class="detail-value">{{ app.direction }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Запрашиваемая сумма:</span>
+                    <span class="detail-value amount">{{ "{:,.0f}".format(app.amount) }} ₽</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Команда:</span>
+                    <span class="detail-value">{{ app.team_size or 1 }} человек</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Описание проекта -->
+        <div class="detail-section">
+            <h3>Описание проекта</h3>
+
+            <div class="text-block">
+                <h4>Краткое описание</h4>
+                <p>{{ app.summary or 'Не указано' }}</p>
+            </div>
+
+            <div class="text-block">
+                <h4>Проблема, которую решает проект</h4>
+                <p>{{ app.problem or 'Не указано' }}</p>
+            </div>
+
+            <div class="text-block">
+                <h4>Уникальность решения</h4>
+                <p>{{ app.uniqueness or 'Не указано' }}</p>
+            </div>
+
+            <div class="text-block">
+                <h4>План реализации</h4>
+                <p>{{ app.plan or 'Не указано' }}</p>
+            </div>
+
+            <div class="text-block">
+                <h4>Ожидаемые результаты</h4>
+                <p>{{ app.results or 'Не указано' }}</p>
+            </div>
+
+            <div class="text-block">
+                <h4>Целевая аудитория</h4>
+                <p>{{ app.audience or 'Не указано' }}</p>
+            </div>
+        </div>
+
+        <!-- Форма изменения статуса -->
+        <div class="detail-section status-form">
+            <h3>Изменить статус заявки</h3>
+            <form method="POST" action="/admin/update_status/{{ app.id }}">
+                <div class="form-row">
+                    <select name="status" class="status-select">
+                        <option value="На рассмотрении" {% if app.status == 'На рассмотрении' %}selected{% endif %}>На рассмотрении</option>
+                        <option value="Одобрено" {% if app.status == 'Одобрено' %}selected{% endif %}>Одобрено</option>
+                        <option value="Отклонено" {% if app.status == 'Отклонено' %}selected{% endif %}>Отклонено</option>
+                    </select>
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Результаты AI проверки -->
+{% if app.ai_score %}
+<div class="detail-section ai-results">
+    <h3>Результаты AI проверки</h3>
+    <div class="ai-score-display">
+        <div class="ai-score-value">
+            <span class="score-number">{{ app.ai_score }}</span>
+            <span class="score-total">/ 100</span>
+        </div>
+        <div class="score-bar">
+            <div class="score-bar-fill" style="width: {{ app.ai_score }}%"></div>
+        </div>
+    </div>
+
+    <div class="ai-status">
+        <strong>Статус AI:</strong>
+        <span class="status-badge
+            {% if app.ai_status == 'approved' %}status-approved
+            {% elif app.ai_status == 'rejected' %}status-rejected
+            {% else %}status-review{% endif %}">
+            {{ app.ai_status }}
+        </span>
+    </div>
+
+    {% if app.ai_recommendations %}
+    <div class="ai-recommendations">
+        <strong>Рекомендации AI:</strong>
+        <ul>
+            {% set recs = app.ai_recommendations|from_json %}
+            {% for rec in recs %}
+            <li>{{ rec }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <div class="ai-actions">
+        <a href="/admin/ai_check/{{ app.id }}" class="btn btn-primary">Запустить AI проверку</a>
+        <a href="/admin/application/{{ app.id }}/docs_check" class="btn btn-outline">Проверить документы</a>
+    </div>
+</div>
+{% else %}
+<div class="detail-section ai-placeholder">
+    <h3>AI-анализ заявки</h3>
+    <p>Выполните интеллектуальную проверку заявки с помощью AI</p>
+    <a href="/admin/ai_check/{{ app.id }}" class="btn btn-primary">Запустить AI проверку</a>
+</div>
+{% endif %}
+
+
+    </div>
+</div>
+{% endblock %}

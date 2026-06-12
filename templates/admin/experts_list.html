@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Эксперты{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h2>Управление экспертами</h2>
+            <a href="/admin/experts/add" class="btn btn-primary">+ Добавить эксперта</a>
+        </div>
+
+        <div class="table-responsive">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>ФИО</th>
+                        <th>Email</th>
+                        <th>Компетенции</th>
+                        <th>Нагрузка</th>
+                        <th>Рейтинг</th>
+                        <th>Статус</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for expert in experts %}
+                    <tr>
+                        <td>{{ expert.id }}</td>
+                        <td>{{ expert.full_name }}</td>
+                        <td>{{ expert.email }}</td>
+                        <td>
+                            {% for area in expert.expertise_areas %}
+                                <span class="tag">{{ area }}</span>
+                            {% endfor %}
+                        </td>
+                        <td>{{ expert.current_load }}/{{ expert.max_load }}</td>
+                        <td>{{ expert.rating }}</td>
+                        <td>
+                            <span class="status-badge {% if expert.is_available %}status-approved{% else %}status-rejected{% endif %}">
+                                {{ 'Доступен' if expert.is_available else 'Недоступен' }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="/admin/experts/{{ expert.id }}/toggle" class="btn btn-sm btn-outline">
+                                {{ 'Отключить' if expert.is_available else 'Включить' }}
+                            </a>
+                            <a href="/admin/experts/{{ expert.id }}/delete" class="btn btn-sm btn-danger" onclick="return confirm('Удалить эксперта?')">Удалить</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Личный кабинет{% endblock %}
+
+{% block content %}
+<div class="profile-header">
+    <div class="profile-info">
+        <h1>Личный кабинет</h1>
+        <p class="welcome-text">Добро пожаловать, {{ user.full_name }}!</p>
+    </div>
+    <a href="/apply" class="btn btn-success btn-large">Подать новую заявку</a>
+</div>
+
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h2>Мои заявки</h2>
+            <span class="badge-count">{{ applications|length }} заявок</span>
+        </div>
+
+        {% if applications %}
+        <div class="table-responsive">
+            <table class="applications-table">
+                <thead>
+                    <tr>
+                        <th>№</th>
+                        <th>Название проекта</th>
+                        <th>Запрашиваемая сумма</th>
+                        <th>Дата подачи</th>
+                        <th>Статус</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for app in applications %}
+                    <tr>
+                        <td>#{{ app.id }}</td>
+                        <td class="project-name">{{ app.project_name }}</td>
+                        <td class="amount">{{ "{:,.0f}".format(app.amount) }} ₽</td>
+                        <td>{{ app.created_at.strftime('%d.%m.%Y') if app.created_at else '-' }}</td>
+                        <td>
+                            <span class="status-badge
+                                {% if app.status == 'Одобрено' %}status-approved
+                                {% elif app.status == 'Отклонено' %}status-rejected
+                                {% else %}status-review{% endif %}">
+                                {{ app.status }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="/application/{{ app.id }}" class="btn btn-sm btn-outline">Подробнее</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <h3>У вас пока нет заявок</h3>
+            <p>Подайте первую заявку на грантовый конкурс</p>
+            <a href="/apply" class="btn btn-primary">Подать заявку</a>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="info-card">
+        <h3>Информация о грантовом конкурсе</h3>
+        <div class="info-grid">
+            <div class="info-item">
+                <span class="info-label">Приём заявок:</span>
+                <span class="info-value">до 30 июня 2026 г.</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Максимальная сумма:</span>
+                <span class="info-value">2 000 000 ₽</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Срок реализации:</span>
+                <span class="info-value">до 36 месяцев</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Результаты:</span>
+                <span class="info-value">в течение 30 дней после окончания приёма</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Эксперты - Гранты России</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header class="site-header">
+        <h1>Управление экспертами</h1>
+        <div class="header-links">
+            <a href="/admin/dashboard">Панель</a>
+            <a href="/logout">Выход</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h2>Список экспертов</h2>
+                <a href="/admin/experts/add" class="btn btn-success">+ Добавить эксперта</a>
+            </div>
+
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr><th>ID</th><th>ФИО</th><th>Email</th><th>Компетенции</th><th>Нагрузка</th><th>Рейтинг</th><th>Статус</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for expert in experts %}
+                        <tr>
+                            <td>{{ expert.id }}</td>
+                            <td>{{ expert.full_name }}</td>
+                            <td>{{ expert.email }}</td>
+                            <td>{{ expert.expertise_areas|join(', ') if expert.expertise_areas else '-' }}</td>
+                            <td>{{ expert.current_load }}/{{ expert.max_load }}</td>
+                            <td>{{ expert.rating }}</td>
+                            <td>{{ 'Доступен' if expert.is_available else 'Недоступен' }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="text-center mt-20">
+                <a href="/admin/dashboard" class="btn btn-secondary">Назад</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

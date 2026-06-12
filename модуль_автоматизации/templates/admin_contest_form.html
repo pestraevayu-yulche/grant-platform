@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}{% if contest %}Редактирование конкурса{% else %}Создание конкурса{% endif %} - ВКонкурсе{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="card">
+        <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;gap:16px;">
+            <div>
+                <h2>{% if contest %}Редактирование конкурса{% else %}Создание конкурса{% endif %}</h2>
+                <p>Заполните данные конкурса. Эти поля будут использоваться модулем поиска проектов для смыслового подбора.</p>
+            </div>
+            <a href="/admin/dashboard{% if contest %}?contest_id={{ contest.id }}{% endif %}" class="btn btn-outline" title="Вернуться в админ-панель">×</a>
+        </div>
+
+        {% if error %}
+        <div class="alert alert-error">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST">
+            <div class="form-section">
+                <div class="form-group">
+                    <label>Название конкурса <span class="required">*</span></label>
+                    <input type="text" name="name" required value="{{ contest.name if contest else '' }}" placeholder="Например: Конкурс технологических проектов">
+                </div>
+
+                <div class="form-group">
+                    <label>Описание конкурса <span class="required">*</span></label>
+                    <textarea name="description" rows="5" required placeholder="Опишите цель, тематику и суть конкурса">{{ contest.description if contest else '' }}</textarea>
+                    <div class="form-hint">По этому описанию модуль поиска будет подбирать проекты по смыслу.</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Направления конкурса <span class="required">*</span></label>
+                    <textarea name="directions" rows="7" required placeholder="Каждое направление с новой строки">{{ directions_text }}</textarea>
+                    <div class="form-hint">Например: Цифровые технологии; Медицина; Образование; Социальные проекты.</div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Параметры конкурса</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Максимальная сумма гранта, ₽</label>
+                        <input type="number" name="max_amount" min="0" step="1000" value="{{ contest.max_amount if contest and contest.max_amount else '' }}">
+                    </div>
+                    <div class="form-group">
+                        <label>Срок реализации, месяцев</label>
+                        <input type="number" name="duration_months" min="1" value="{{ contest.duration_months if contest and contest.duration_months else '' }}">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Регион</label>
+                        <input type="text" name="region" value="{{ contest.region if contest and contest.region else 'Все регионы РФ' }}">
+                    </div>
+                    <div class="form-group">
+                        <label>Срок подачи заявок</label>
+                        <input type="date" name="application_deadline" value="{{ contest.application_deadline if contest and contest.application_deadline else '' }}">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-large">Сохранить конкурс</button>
+                <a href="/admin/dashboard{% if contest %}?contest_id={{ contest.id }}{% endif %}" class="btn btn-outline">Вернуться в админ-панель</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

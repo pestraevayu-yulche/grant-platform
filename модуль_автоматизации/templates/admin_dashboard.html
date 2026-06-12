@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+
+{% block title %}Панель организатора - ВКонкурсе{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Выбор конкурса -->
+    <div class="contest-selector-card">
+        <h3>Выберите конкурс</h3>
+        <div class="contest-buttons">
+            {% for contest in contests %}
+            <a href="/admin/dashboard?contest_id={{ contest.id }}"
+               class="contest-btn {% if selected_contest|string == contest.id|string %}active{% endif %}">
+                <i class="fas fa-trophy"></i> {{ contest.name }}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Кнопки действий для выбранного конкурса -->
+    <div class="action-buttons">
+        <a href="/admin/contests/create" class="btn btn-success">
+            <i class="fas fa-plus"></i> Создать конкурс
+        </a>
+        {% if selected_contest %}
+        <a href="/admin/contests/{{ selected_contest }}/edit" class="btn btn-warning">
+            <i class="fas fa-edit"></i> Редактировать конкурс
+        </a>
+        <form method="POST" action="/admin/contests/{{ selected_contest }}/delete" style="display:inline;" onsubmit="return confirm('Удалить выбранный конкурс?');">
+            <button type="submit" class="btn btn-danger">
+                <i class="fas fa-trash"></i> Удалить конкурс
+            </button>
+        </form>
+        {% endif %}
+
+        <a href="/admin/ai_check_all?contest_id={{ selected_contest }}" class="btn btn-primary">
+            <i class="fas fa-robot"></i> AI проверка
+        </a>
+        <a href="/admin/assign_experts_batch?contest_id={{ selected_contest }}" class="btn btn-success">
+            <i class="fas fa-user-plus"></i> Назначить экспертов
+        </a>
+        <a href="/admin/project_experts?contest_id={{ selected_contest }}" class="btn btn-primary">
+            <i class="fas fa-chalkboard-user"></i> Проекты с экспертами
+        </a>
+        <a href="/admin/anomalies_report?contest_id={{ selected_contest }}" class="btn btn-warning">
+            <i class="fas fa-chart-line"></i> Аномалии
+        </a>
+        <a href="/admin/final_hearing_report?contest_id={{ selected_contest }}" class="btn btn-primary">
+            <i class="fas fa-file-alt"></i> Итоговый отчет
+        </a>
+        <a href="/admin/export_report/excel?contest_id={{ selected_contest }}" class="btn btn-secondary">
+            <i class="fas fa-download"></i> Скачать отчет
+        </a>
+        <!-- НОВАЯ КНОПКА - выход на модуль поиска -->
+        <a href="/admin/go_to_search{% if selected_contest %}?contest_id={{ selected_contest }}{% endif %}" class="btn btn-info" style="background: #7c9bc0;">
+            <i class="fas fa-search"></i> Поиск проектов
+        </a>
+    </div>
+
+    <!-- Таблица заявок -->
+    <div class="card">
+        <div class="card-header">
+            <h2>Список заявок</h2>
+            <span class="status-badge status-review">Всего: {{ applications|length }}</span>
+        </div>
+
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Проект</th>
+                        <th>Заявитель</th>
+                        <th>Сумма</th>
+                        <th>AI балл</th>
+                        <th>Эксперты</th>
+                        <th>Итог</th>
+                        <th>Статус</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for app in applications %}
+                    <tr>
+                        <td>{{ app['id'] }}</td>
+                        <td>{{ app['project_name'] }}</td>
+                        <td>{{ app['full_name'] }}</td>
+                        <td>{{ "{:,.0f}".format(app['amount']) if app['amount'] else 0 }} ₽</td>
+                        <td class="score-formal">{{ app['formal_score'] or '—' }}</td>
+                        <td class="score-expert">{{ app['expert_score'] or '—' }}</td>
+                        <td class="score-final">{% if app['score'] %}<strong>{{ app['score'] }}</strong>{% else %}—{% endif %}</td>
+                        <td>
+                            <span class="status-badge
+                                {% if app['status'] == 'На рассмотрении' %}status-review
+                                {% elif app['status'] == 'Одобрено' %}status-approved
+                                {% elif app['status'] == 'Победитель' %}status-approved
+                                {% elif app['status'] == 'Рекомендовано' %}status-approved
+                                {% else %}status-rejected{% endif %}">
+                                {{ app['status'] }}
+                            </span>
+                        </td>
+                        <td><a href="/admin/application/{{ app['id'] }}" class="btn btn-sm btn-outline">Просмотр</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+.contest-selector-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 24px;
+    border: 1px solid #e2e8f0;
+}
+
+.contest-selector-card h3 {
+    margin-bottom: 16px;
+    font-size: 16px;
+    color: #2c3e50;
+}
+
+.contest-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.contest-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 30px;
+    text-decoration: none;
+    color: #2c3e50;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.contest-btn i {
+    font-size: 14px;
+}
+
+.contest-btn:hover {
+    background: #e2e8f0;
+    transform: translateY(-1px);
+}
+
+.contest-btn.active {
+    background: #1e3c72;
+    border-color: #1e3c72;
+    color: white;
+}
+
+.action-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding: 16px;
+    background: #f8fafc;
+    border-radius: 12px;
+}
+
+.btn-info {
+    background: #7c9bc0;
+    color: white;
+}
+</style>
+{% endblock %}

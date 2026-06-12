@@ -1,0 +1,395 @@
+{% extends "base.html" %}
+
+{% block title %}Подача заявки - {{ contest.name }}{% endblock %}
+
+{% block content %}
+<div class="container-small">
+    <div class="card">
+        <div class="card-header">
+            <h2>{{ contest.name }}</h2>
+            <span class="status-badge status-review">Шаг Вперёд</span>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data" id="multistepForm" onsubmit="return validateForm(event)">
+            <div class="tabs">
+                <div class="tab active" onclick="showTab(0)">Информация об участнике</div>
+                <div class="tab" onclick="showTab(1)">Данные о проекте</div>
+                <div class="tab" onclick="showTab(2)">Описание проекта</div>
+            </div>
+
+            <!-- Вкладка 1: Участник -->
+            <div class="tab-content active">
+                <div class="section-header">
+                    <h3>Личные данные</h3>
+                    <p>Заполните информацию о себе</p>
+                </div>
+
+                <div class="form-group">
+                    <label>ФИО полностью <span class="required">*</span></label>
+                    <input type="text" name="full_name" required placeholder="Иванов Иван Иванович">
+                </div>
+
+                <div class="form-group">
+                    <label>Место проживания <span class="required">*</span></label>
+                    <input type="text" name="address" required placeholder="Город, улица, дом">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Дата рождения <span class="required">*</span></label>
+                        <input type="date" name="birth_date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Место учебы <span class="required">*</span></label>
+                        <input type="text" name="education_place" required placeholder="Название учебного заведения">
+                    </div>
+                </div>
+
+                <div class="section-header">
+                    <h3>Паспортные данные</h3>
+                    <p>Данные основного документа, удостоверяющего личность</p>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Серия паспорта <span class="required">*</span></label>
+                        <input type="text" name="passport_series" required placeholder="4 цифры" maxlength="4">
+                    </div>
+                    <div class="form-group">
+                        <label>Номер паспорта <span class="required">*</span></label>
+                        <input type="text" name="passport_number" required placeholder="6 цифр" maxlength="6">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Кем выдан <span class="required">*</span></label>
+                    <input type="text" name="passport_issued_by" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Дата выдачи <span class="required">*</span></label>
+                    <input type="date" name="passport_date" required>
+                </div>
+
+                <div class="section-header">
+                    <h3>Прикрепляемые документы</h3>
+                    <p>Загрузите необходимые файлы в форматах PDF, DOC, DOCX, JPG, PNG</p>
+                </div>
+
+                <div class="form-group">
+                    <label>Согласие на обработку данных <span class="required">*</span></label>
+                    <input type="file" name="consent_file" required>
+                    <div class="file-info">
+                        <a href="/static/consent_template.docx" download="consent_template.docx">Скачать шаблон согласия</a> | Заполните, распечатайте, подпишите и загрузите скан или фото
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Справка с места учебы <span class="required">*</span></label>
+                    <input type="file" name="education_file" required>
+                    <div class="file-info">Справка должна быть заверена учебным заведением</div>
+                </div>
+
+                <div class="nav-buttons">
+                    <div></div>
+                    <button type="button" class="btn btn-primary" onclick="nextTab()">Далее →</button>
+                </div>
+            </div>
+
+            <!-- Вкладка 2: Проект -->
+            <div class="tab-content">
+                <div class="section-header">
+                    <h3>Основная информация о проекте</h3>
+                    <p>Заполните данные о вашем проекте</p>
+                </div>
+
+                <div class="form-group">
+                    <label>Название проекта <span class="required">*</span></label>
+                    <input type="text" name="project_name" required placeholder="Укажите полное название проекта">
+                </div>
+
+                <div class="form-group">
+                    <label>Краткое название (аббревиатура)</label>
+                    <input type="text" name="project_short" placeholder="Например: ИС Грант">
+                    <div class="form-hint">Используется для внутреннего документооборота</div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Запрашиваемая сумма <span class="required">*</span></label>
+                        <input type="number" name="amount" required placeholder="0 ₽" min="0" step="1000">
+                    </div>
+                    <div class="form-group">
+                        <label>Срок реализации (месяцы)</label>
+                        <input type="number" name="duration" placeholder="от 1 до 36">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Направление <span class="required">*</span></label>
+                        <select name="direction" required>
+                            <option value="">Выберите направление</option>
+                            {% for dir in contest.directions %}
+                            <option value="{{ dir }}">{{ dir }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Команда проекта (кол-во участников)</label>
+                        <input type="number" name="team_size" placeholder="2" min="1">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Есть ли прототип?</label>
+                    <select name="prototype">
+                        <option>Нет</option>
+                        <option>Да</option>
+                    </select>
+                </div>
+
+                <div class="nav-buttons">
+                    <button type="button" class="btn btn-secondary" onclick="prevTab()">← Назад</button>
+                    <button type="button" class="btn btn-primary" onclick="nextTab()">Далее →</button>
+                </div>
+            </div>
+
+            <!-- Вкладка 3: Описание -->
+            <div class="tab-content">
+                <div class="section-header">
+                    <h3>Детальное описание проекта</h3>
+                    <p>Чем подробнее вы опишете проект, тем выше его оценка при проверке</p>
+                </div>
+
+                <div class="form-group">
+                    <label>Краткое описание <span class="required">*</span></label>
+                    <textarea name="summary" required placeholder="Опишите суть проекта в 2-3 предложениях"></textarea>
+                    <div class="form-hint">Рекомендуемый объем: 100-300 символов</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Проблема, которую решает проект <span class="required">*</span></label>
+                    <textarea name="problem" required placeholder="Какая существует проблема? Почему её необходимо решить?"></textarea>
+                    <div class="form-hint">Рекомендуемый объем: 200-500 символов</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Целевая аудитория</label>
+                    <textarea name="audience" placeholder="Для кого предназначен проект? Опишите портрет пользователя"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Уникальность решения</label>
+                    <textarea name="uniqueness" placeholder="Чем ваш проект отличается от существующих аналогов? В чем его новизна?"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>План реализации</label>
+                    <textarea name="plan" placeholder="Опишите основные этапы реализации проекта с указанием сроков"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Ожидаемые результаты</label>
+                    <textarea name="results" placeholder="Какие результаты планируется достичь? Как измерить успех проекта?"></textarea>
+                </div>
+
+                <div class="form-section">
+                    <h3>Согласие на обработку персональных данных</h3>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="consent" required>
+                            <span class="checkbox-text">
+                                Я даю согласие на обработку моих персональных данных в соответствии с
+                                <a href="#" target="_blank">Политикой обработки персональных данных</a>
+                            </span>
+                        </label>
+                    </div>
+                    <small class="form-hint">Согласие требуется для участия в грантовом конкурсе</small>
+                </div>
+
+                <div class="nav-buttons">
+                    <button type="button" class="btn btn-secondary" onclick="prevTab()">← Назад</button>
+                    <button type="submit" class="btn btn-primary">Подать заявку</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+.nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.btn-secondary {
+    background: #e2e8f0;
+    color: #2c3e50;
+    border: 1px solid #cbd5e1;
+}
+
+.btn-secondary:hover {
+    background: #cbd5e1;
+    transform: translateY(-1px);
+}
+
+.checkbox-group {
+    margin: 15px 0;
+    padding: 10px;
+    background: #f8fafc;
+    border-radius: 8px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+}
+
+.checkbox-label input {
+    width: 20px;
+    height: 20px;
+    margin: 0;
+}
+
+.checkbox-text {
+    font-size: 14px;
+    color: #2c3e50;
+}
+
+.checkbox-text a {
+    color: #7c9bc0;
+    text-decoration: none;
+}
+
+.checkbox-text a:hover {
+    text-decoration: underline;
+}
+
+.form-hint {
+    font-size: 12px;
+    color: #64748b;
+    margin-top: 4px;
+}
+</style>
+
+<script>
+    let currentTab = 0;
+    const tabs = document.querySelectorAll('.tab');
+    const contents = document.querySelectorAll('.tab-content');
+
+    function showTab(index) {
+        tabs.forEach((tab, i) => {
+            tab.classList.toggle('active', i === index);
+        });
+        contents.forEach((content, i) => {
+            content.classList.toggle('active', i === index);
+        });
+        currentTab = index;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function nextTab() {
+        if (currentTab < tabs.length - 1) {
+            // Валидация текущей вкладки перед переходом
+            if (validateCurrentTab()) {
+                showTab(currentTab + 1);
+            }
+        }
+    }
+
+    function prevTab() {
+        if (currentTab > 0) {
+            showTab(currentTab - 1);
+        }
+    }
+
+    function validateCurrentTab() {
+        let errors = [];
+
+        if (currentTab === 0) {
+            const fullName = document.querySelector('input[name="full_name"]')?.value.trim();
+            const address = document.querySelector('input[name="address"]')?.value.trim();
+            const birthDate = document.querySelector('input[name="birth_date"]')?.value;
+            const passportSeries = document.querySelector('input[name="passport_series"]')?.value.trim();
+            const passportNumber = document.querySelector('input[name="passport_number"]')?.value.trim();
+            const consentFile = document.querySelector('input[name="consent_file"]')?.files[0];
+            const educationFile = document.querySelector('input[name="education_file"]')?.files[0];
+
+            if (!fullName) errors.push("ФИО обязательно для заполнения");
+            if (!address) errors.push("Место проживания обязательно");
+            if (!birthDate) errors.push("Дата рождения обязательна");
+            if (!passportSeries) errors.push("Серия паспорта обязательна");
+            if (passportSeries && passportSeries.length !== 4) errors.push("Серия паспорта должна содержать 4 цифры");
+            if (!passportNumber) errors.push("Номер паспорта обязателен");
+            if (passportNumber && passportNumber.length !== 6) errors.push("Номер паспорта должен содержать 6 цифр");
+            if (!consentFile) errors.push("Загрузите согласие на обработку данных");
+            if (!educationFile) errors.push("Загрузите справку с места учебы");
+        }
+
+        if (currentTab === 1) {
+            const projectName = document.querySelector('input[name="project_name"]')?.value.trim();
+            const amount = document.querySelector('input[name="amount"]')?.value.trim();
+            const direction = document.querySelector('select[name="direction"]')?.value;
+            const teamSize = document.querySelector('input[name="team_size"]')?.value.trim();
+
+            if (!projectName) errors.push("Название проекта обязательно");
+            if (!amount) errors.push("Запрашиваемая сумма обязательна");
+            if (amount && (isNaN(amount) || Number(amount) <= 0)) errors.push("Сумма должна быть положительным числом");
+            if (!direction) errors.push("Выберите направление проекта");
+            if (!teamSize) errors.push("Укажите количество участников команды");
+        }
+
+        if (errors.length > 0) {
+            alert("Пожалуйста, заполните все обязательные поля:\n- " + errors.join("\n- "));
+            return false;
+        }
+        return true;
+    }
+
+    function validateForm(event) {
+        let errors = [];
+
+        const fullName = document.querySelector('input[name="full_name"]')?.value.trim();
+        const address = document.querySelector('input[name="address"]')?.value.trim();
+        const birthDate = document.querySelector('input[name="birth_date"]')?.value;
+        const passportSeries = document.querySelector('input[name="passport_series"]')?.value.trim();
+        const passportNumber = document.querySelector('input[name="passport_number"]')?.value.trim();
+        const projectName = document.querySelector('input[name="project_name"]')?.value.trim();
+        const amount = document.querySelector('input[name="amount"]')?.value.trim();
+        const direction = document.querySelector('select[name="direction"]')?.value;
+        const teamSize = document.querySelector('input[name="team_size"]')?.value.trim();
+        const summary = document.querySelector('textarea[name="summary"]')?.value.trim();
+        const problem = document.querySelector('textarea[name="problem"]')?.value.trim();
+        const consent = document.querySelector('input[name="consent"]')?.checked;
+
+        if (!fullName) errors.push("ФИО обязательно для заполнения");
+        if (!address) errors.push("Место проживания обязательно");
+        if (!birthDate) errors.push("Дата рождения обязательна");
+        if (!passportSeries) errors.push("Серия паспорта обязательна");
+        if (passportSeries && passportSeries.length !== 4) errors.push("Серия паспорта должна содержать 4 цифры");
+        if (!passportNumber) errors.push("Номер паспорта обязателен");
+        if (passportNumber && passportNumber.length !== 6) errors.push("Номер паспорта должен содержать 6 цифр");
+        if (!projectName) errors.push("Название проекта обязательно");
+        if (!amount) errors.push("Запрашиваемая сумма обязательна");
+        if (amount && (isNaN(amount) || Number(amount) <= 0)) errors.push("Сумма должна быть положительным числом");
+        if (!direction) errors.push("Выберите направление проекта");
+        if (!teamSize) errors.push("Укажите количество участников команды");
+        if (!summary) errors.push("Краткое описание проекта обязательно");
+        if (!problem) errors.push("Описание проблемы обязательно");
+        if (!consent) errors.push("Необходимо дать согласие на обработку персональных данных");
+
+        if (errors.length > 0) {
+            event.preventDefault();
+            alert("Пожалуйста, исправьте следующие ошибки:\n- " + errors.join("\n- "));
+            return false;
+        }
+        return true;
+    }
+</script>
+{% endblock %}

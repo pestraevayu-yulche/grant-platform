@@ -1,0 +1,1741 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Результаты поиска проектов</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f8f9fa;
+            color: #2c3e50;
+        }
+
+        .site-header {
+            background: #ffffff;
+            border-bottom: 1px solid #cbd5e1;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .site-header h1 {
+            font-size: 24px;
+            font-weight: 500;
+            color: #1e3c72;
+            letter-spacing: -0.3px;
+        }
+
+        .header-links {
+            display: flex;
+            gap: 24px;
+        }
+
+        .header-links a {
+            color: #6c757d;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.2s ease;
+        }
+
+        .header-links a:hover {
+            color: #1e3c72;
+        }
+
+        .logout-link {
+            color: #9ca3af !important;
+            border-left: 1px solid #cbd5e1;
+            padding-left: 18px;
+        }
+
+        .logout-link:hover {
+            color: #dc2626 !important;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .competition-info-bar {
+            background: rgba(30, 60, 114, 0.05);
+            border-radius: 12px;
+            padding: 12px 20px;
+            margin-bottom: 20px;
+            border-left: 3px solid #1e3c72;
+            border-right: 1px solid #cbd5e1;
+            border-top: 1px solid #cbd5e1;
+            border-bottom: 1px solid #cbd5e1;
+        }
+
+        .filters-bar {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 24px;
+            border: 1px solid #cbd5e1;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            align-items: flex-end;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 180px;
+        }
+
+        .filter-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .relevance-input-wrapper input {
+            width: 100%;
+            padding: 10px 12px;
+            font-size: 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            background: #f8f9fa;
+            transition: all 0.2s ease;
+        }
+
+        .relevance-input-wrapper input:focus {
+            outline: none;
+            border-color: #1e3c72;
+            box-shadow: 0 0 0 2px rgba(30, 60, 114, 0.1);
+            background: #ffffff;
+        }
+
+        .relevance-scale-hint {
+            margin-top: 8px;
+            font-size: 12px;
+            line-height: 1.45;
+            color: #6c757d;
+            font-weight: 400;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+
+        .relevance-scale-hint div {
+            margin-top: 3px;
+        }
+
+        .source-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .source-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .source-item input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #1e3c72;
+        }
+
+        .source-item label {
+            font-size: 13px;
+            margin-bottom: 0;
+            cursor: pointer;
+            color: #2c3e50;
+        }
+
+        .directions-filter {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .direction-checkbox-item {
+            background: #f8f9fa;
+            border: 1px solid #cbd5e1;
+            border-radius: 20px;
+            padding: 4px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .direction-checkbox-item:hover {
+            background: rgba(30, 60, 114, 0.05);
+            border-color: #1e3c72;
+        }
+
+        .direction-checkbox-item input {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: #1e3c72;
+        }
+
+        .direction-checkbox-item label {
+            font-size: 12px;
+            margin-bottom: 0;
+            cursor: pointer;
+        }
+
+        .apply-filters {
+            background: #1e3c72;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .apply-filters:hover {
+            background: #152c55;
+            transform: translateY(-1px);
+        }
+
+        .tabs-container {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 24px;
+            border: 1px solid #cbd5e1;
+            display: flex;
+            gap: 4px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px 20px;
+            background: transparent;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #6c757d;
+        }
+
+        .tab-btn.active {
+            background: #1e3c72;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .stats-bar {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            border: 1px solid #cbd5e1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .results-count {
+            font-size: 13px;
+            color: #6c757d;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn-action {
+            background: #f8f9fa;
+            border: 1px solid #cbd5e1;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-action:hover {
+            background: #e9ecef;
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: #1e3c72;
+            border-color: #1e3c72;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #152c55;
+        }
+
+        .btn-email-export {
+            background: #e8c8af;
+            border-color: #d4b08c;
+            color: #2c3e50;
+        }
+
+        .btn-email-export:hover {
+            background: #ddb896;
+        }
+
+        .btn-vk-export {
+            background: #a7c9a8;
+            border-color: #8fb590;
+            color: #2c3e50;
+        }
+
+        .btn-vk-export:hover {
+            background: #94bb96;
+        }
+
+        .btn-success {
+            background: #2e7d32;
+            border-color: #2e7d32;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #1b5e20;
+        }
+
+        .project-card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border: 1px solid #cbd5e1;
+            transition: all 0.2s ease;
+        }
+
+        .project-card:hover {
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .project-checkbox {
+            margin-top: 3px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #1e3c72;
+        }
+
+        .project-content {
+            flex: 1;
+        }
+
+        .project-title {
+            font-size: 17px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .project-title a {
+            color: #1e3c72;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .project-title a:hover {
+            color: #152c55;
+            text-decoration: underline;
+        }
+
+        .project-authors {
+            font-size: 13px;
+            color: #6c757d;
+            margin-bottom: 8px;
+        }
+
+        .project-meta {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .source {
+            font-size: 11px;
+            padding: 4px 10px;
+            background: #f8f9fa;
+            border-radius: 20px;
+            color: #6c757d;
+            border: 1px solid #cbd5e1;
+        }
+
+        .relevance {
+            font-size: 11px;
+            padding: 4px 10px;
+            background: rgba(30, 60, 114, 0.08);
+            border-radius: 20px;
+            color: #1e3c72;
+        }
+
+        .email-badge {
+            background: #e8c8af;
+            color: #2c3e50;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            display: inline-block;
+        }
+
+        .contact-badge {
+            background: rgba(30, 60, 114, 0.08);
+            color: #1e3c72;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            display: inline-block;
+        }
+
+        .no-email-badge {
+            background: #fef2f2;
+            color: #dc2626;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            display: inline-block;
+        }
+
+        .project-abstract {
+            font-size: 13px;
+            color: #6c757d;
+            margin-top: 10px;
+            line-height: 1.5;
+        }
+
+        .vk-results-section {
+            margin-top: 32px;
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid #cbd5e1;
+        }
+
+        .vk-results-section h3 {
+            font-size: 18px;
+            font-weight: 500;
+            margin: 0;
+            color: #1e3c72;
+        }
+
+        .vk-results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 16px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid #cbd5e1;
+        }
+
+        .vk-results-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .vk-results-hint {
+            margin-top: 6px;
+            color: #6c757d;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        @media (max-width: 900px) {
+            .vk-results-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .vk-results-actions {
+                justify-content: flex-start;
+            }
+        }
+
+        .vk-results-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .vk-results-table th,
+        .vk-results-table td {
+            border: 1px solid #cbd5e1;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .vk-results-table th {
+            background: #f8f9fa;
+            font-weight: 500;
+            color: #1e3c72;
+        }
+
+        .send-vk-btn {
+            background: #a7c9a8;
+            color: #2c3e50;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .send-vk-btn:hover {
+            background: #94bb96;
+            transform: translateY(-1px);
+        }
+
+        .progress-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .progress-card {
+            background: white;
+            border-radius: 16px;
+            padding: 28px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #cbd5e1;
+            border-radius: 3px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            background: #1e3c72;
+            transition: width 0.3s ease;
+        }
+
+        .floating-buttons {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            display: flex;
+            gap: 12px;
+            z-index: 999;
+        }
+
+        .float-btn {
+            background: #1e3c72;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+        }
+
+        .float-btn:hover {
+            background: #152c55;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .selected-badge {
+            background: #1e3c72;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            margin-left: 8px;
+        }
+
+        .close-progress-btn {
+            background: #f8f9fa;
+            border: 1px solid #cbd5e1;
+            padding: 8px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            margin-top: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .close-progress-btn:hover {
+            background: #e9ecef;
+        }
+
+        .invite-queue-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.52);
+            align-items: center;
+            justify-content: center;
+            z-index: 1100;
+            padding: 20px;
+        }
+
+        .invite-queue-card {
+            background: #ffffff;
+            border-radius: 18px;
+            max-width: 760px;
+            width: 100%;
+            max-height: 86vh;
+            overflow: hidden;
+            border: 1px solid #cbd5e1;
+            box-shadow: 0 18px 55px rgba(15, 23, 42, 0.24);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .invite-queue-sticky {
+            position: sticky;
+            top: 0;
+            z-index: 5;
+            background: #ffffff;
+            padding: 24px 24px 16px;
+            border-bottom: 1px solid #e5e7eb;
+            box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
+        }
+
+        .invite-queue-card h3 {
+            color: #1e3c72;
+            font-size: 20px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .invite-queue-note {
+            color: #6c757d;
+            font-size: 13px;
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+
+        .invite-current-action {
+            background: #f8f9fa;
+            border: 1px solid #cbd5e1;
+            border-radius: 14px;
+            padding: 14px;
+            margin: 14px 0;
+            font-size: 14px;
+            color: #2c3e50;
+        }
+
+        .invite-current-action div {
+            margin-top: 4px;
+        }
+
+        .invite-queue-list {
+            margin: 16px 24px 24px;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            overflow-y: auto;
+            max-height: calc(86vh - 290px);
+        }
+
+        .invite-queue-row {
+            display: grid;
+            grid-template-columns: 42px 110px 1fr;
+            gap: 10px;
+            align-items: center;
+            padding: 10px 12px;
+            font-size: 13px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .invite-queue-row:last-child {
+            border-bottom: none;
+        }
+
+        .invite-queue-row.active {
+            background: rgba(30, 60, 114, 0.08);
+        }
+
+        .invite-queue-row.done {
+            color: #6c757d;
+            background: #f8f9fa;
+        }
+
+        .invite-queue-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .queue-secondary-btn {
+            background: #ffffff;
+            color: #1e3c72;
+            border: 1px solid #cbd5e1;
+            padding: 10px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .queue-secondary-btn:hover {
+            background: #f8f9fa;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div id="adminReturnBar" style="background:#fff;border-bottom:1px solid #cbd8ea;padding:12px 32px;position:sticky;top:0;z-index:1000;">
+    <a id="adminReturnLink" href="http://127.0.0.1:8000/admin/dashboard" style="color:#1f3f7a;text-decoration:none;font-weight:600;">← Вернуться в админ-панель</a>
+</div>
+<script>
+(function(){
+    const params = new URLSearchParams(window.location.search);
+    const returnUrl = params.get('return_url');
+    const contestId = params.get('external_competition_id') || params.get('competition_id');
+    const link = document.getElementById('adminReturnLink');
+    if (link) {
+        link.href = returnUrl || (contestId ? `http://127.0.0.1:8000/admin/dashboard?contest_id=${contestId}` : 'http://127.0.0.1:8000/admin/dashboard');
+    }
+})();
+</script>
+
+    <header class="site-header">
+        <h1>Вконкурсе</h1>
+        <div class="header-links">
+            <a href="/">Выбор конкурса</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <div id="competitionInfoBar" class="competition-info-bar"></div>
+
+        <div class="filters-bar">
+            <!-- Режим поиска -->
+            <div class="filter-group">
+                <label>Режим поиска</label>
+                <div class="source-group" style="flex-direction: column; align-items: flex-start; gap: 8px;">
+                    <div class="source-item">
+                        <input type="radio" id="searchModeLocal" name="searchModeType" value="local" checked>
+                        <label for="searchModeLocal">Поиск по скачанным проектам</label>
+                    </div>
+                    <div class="source-item">
+                        <input type="radio" id="searchModeLive" name="searchModeType" value="live">
+                        <label for="searchModeLive">Онлайн поиск через API</label>
+                    </div>
+                    <div class="source-item">
+                        <input type="radio" id="searchModeInternal" name="searchModeType" value="internal">
+                        <label for="searchModeInternal">Поиск в своей базе <span style="color:#6c757d; font-size:12px;">(демо-заглушка)</span></label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Фильтр релевантности -->
+            <div class="filter-group">
+                <label>Релевантность</label>
+                <div class="relevance-input-wrapper">
+                    <input type="number" id="minRelevance" min="0" max="100" step="5"
+                        placeholder="от 0 до 100">
+                </div>
+                <div class="relevance-scale-hint">
+                    <div><strong>0</strong> — в теме и аннотации проекта нет подходящих слов и смысловых совпадений с описанием и направлениями конкурса.</div>
+                    <div><strong>100</strong> — тема и аннотация проекта максимально совпадают по смыслу с описанием, названием и направлениями конкурса.</div>
+                </div>
+            </div>
+
+            <!-- Фильтр источников данных -->
+            <div class="filter-group" id="sourcesFilterGroup">
+                <label>Источники данных</label>
+                <div class="source-group">
+                    <div class="source-item">
+                        <input type="checkbox" id="sourceArxiv" checked> <label>arXiv</label>
+                    </div>
+                    <div class="source-item">
+                        <input type="checkbox" id="sourceOpenAlex" checked> <label>OpenAlex</label>
+                    </div>
+                    <div class="source-item">
+                        <input type="checkbox" id="sourceRospatent"> <label>Роспатент</label>
+                    </div>
+                    <div class="source-item">
+                        <input type="checkbox" id="sourcePt2035"> <label>pt.2035</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Фильтр направлений -->
+            <div class="filter-group">
+                <label>Направления</label>
+                <div id="directionsFilter" class="directions-filter"></div>
+            </div>
+
+            <button id="applyFiltersBtn" class="apply-filters">Применить фильтры</button>
+        </div>
+
+        <div class="tabs-container">
+            <button class="tab-btn active" data-tab="email">Проекты с контактами</button>
+            <button class="tab-btn" data-tab="vk">Проекты без контактов</button>
+        </div>
+
+        <div id="tab-email" class="tab-content active">
+            <div class="stats-bar">
+                <div class="results-count" id="emailCount">Загрузка...</div>
+                <div class="action-buttons">
+                    <button class="btn-action" id="toggleAllEmailBtn">Выбрать все</button>
+                    <button class="btn-action btn-primary" id="sendEmailBtn">Отправить приглашения по доступным каналам</button>
+                    <button class="btn-action btn-email-export" id="exportEmailBtn">Экспорт проектов с контактами</button>
+                    <button class="btn-action btn-primary" id="exportAllBtn">Экспорт всех проектов</button>
+                </div>
+            </div>
+            <div id="emailProjectsContainer"></div>
+        </div>
+
+        <div id="tab-vk" class="tab-content">
+            <div class="stats-bar">
+                <div class="results-count" id="vkCount">Загрузка...</div>
+                <div class="action-buttons">
+                    <button class="btn-action" id="toggleAllVkBtn">Выбрать все</button>
+                    <button class="btn-action btn-success" id="startVkSearchBtn">Поиск в VK</button>
+                    <button class="btn-action btn-vk-export" id="exportVkBtn">Экспорт проектов без контактов</button>
+                </div>
+            </div>
+            <div id="vkProjectsContainer"></div>
+
+            <div id="vkResultsSection" class="vk-results-section" style="display: none;">
+                <div class="vk-results-header">
+                    <div>
+                        <h3>Результаты поиска в VK</h3>
+                        <div class="vk-results-hint">Выберите способ открытия найденных VK-поисков по ФИО авторов.</div>
+                    </div>
+                    <div class="vk-results-actions">
+                        <button class="btn-action btn-primary" id="openVkQueueBtn">Последовательно открыть VK</button>
+                        <button class="btn-action" id="sendAllVkBtn">Открыть все поиски VK</button>
+                        <button class="btn-action btn-vk-export" id="exportVkTableBtn">Экспорт таблицы</button>
+                    </div>
+                </div>
+
+                <table class="vk-results-table" id="vkResultsTable">
+                    <thead>
+                        <tr>
+                            <th>Проект</th>
+                            <th>Автор</th>
+                            <th>Действие</th>
+                        </tr>
+                    </thead>
+                    <tbody id="vkResultsBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="floating-buttons" id="floatingButtons" style="display: none;">
+        <button class="float-btn" id="scrollToProjectsBtn">К проектам</button>
+        <button class="float-btn" id="scrollToResultsBtn">К результатам</button>
+    </div>
+
+    <div id="progressModal" class="progress-modal">
+        <div class="progress-card">
+            <h3>Поиск в VK</h3>
+            <div class="progress-status" id="progressStatus"></div>
+            <div class="progress-bar">
+                <div id="progressFill" class="progress-fill"></div>
+            </div>
+            <div class="current-author" id="currentAuthor"></div>
+            <button id="closeProgressBtn" class="close-progress-btn">Закрыть</button>
+        </div>
+    </div>
+
+
+    <div id="inviteQueueModal" class="invite-queue-modal">
+        <div class="invite-queue-card">
+            <div class="invite-queue-sticky">
+                <h3 id="inviteQueueTitle">Последовательная отправка приглашений</h3>
+                <div class="invite-queue-note" id="inviteQueueNote">
+                    Система открывает каналы связи по очереди. Текст приглашения автоматически копируется в буфер обмена, чтобы его можно было вставить в Telegram, VK или SMS. Для Gmail, SMS и WhatsApp текст подставляется в ссылку автоматически, если это поддерживается браузером и приложением.
+                </div>
+                <div id="inviteCurrentAction" class="invite-current-action"></div>
+                <div class="invite-queue-actions">
+                    <button class="btn-action btn-primary" id="openCurrentInviteBtn">Открыть текущий канал</button>
+                    <button class="btn-action" id="openNextInviteBtn">Следующий канал</button>
+                    <button class="queue-secondary-btn" id="copyInviteTextBtn">Скопировать текст</button>
+                    <button class="queue-secondary-btn" id="closeInviteQueueBtn">Закрыть</button>
+                </div>
+            </div>
+            <div id="inviteQueueList" class="invite-queue-list"></div>
+        </div>
+    </div>
+
+    <script>
+
+        let allResults = [], competition = null, vkSearchResults = [], selectedDirections = [];
+        let emailProjectsData = [], vkProjectsData = [];
+        let inviteQueue = [];
+        let inviteQueueIndex = 0;
+        let inviteQueueMode = 'channels';
+
+        async function loadCompetition() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const externalCompetitionId = urlParams.get('external_competition_id');
+            const competitionId = externalCompetitionId ? `external_${externalCompetitionId}` : urlParams.get('competition_id');
+
+            console.log('=== ЗАГРУЗКА КОНКУРСА ===');
+            console.log('competition_id/external_competition_id из URL:', competitionId);
+            console.log('external_competition_id/external_competition_id из URL:', externalCompetitionId);
+
+            if (!competitionId && !externalCompetitionId) {
+                window.location.href = '/';
+                return;
+            }
+
+            try {
+                const apiUrl = externalCompetitionId
+                    ? `/api/external_competitions/${encodeURIComponent(externalCompetitionId)}`
+                    : `/api/competitions/${encodeURIComponent(competitionId)}`;
+
+                const res = await fetch(apiUrl);
+                if (!res.ok) throw new Error(`Конкурс не найден: ${res.status}`);
+                competition = await res.json();
+                console.log('Загружен конкурс:', competition);
+
+                const infoBar = document.getElementById('competitionInfoBar');
+                const integrationBadge = externalCompetitionId
+                    ? '<span style="display:inline-block;margin-top:6px;padding:3px 8px;border-radius:999px;background:#e8f0ff;color:#1e3c72;font-size:12px;">Конкурс загружен из модуля автоматизации</span>'
+                    : '';
+
+                const directionsText = Array.isArray(competition.directions) ? competition.directions.join(', ') : (competition.directions || '');
+                infoBar.innerHTML = `<h3 style="margin-bottom:4px;">${escapeHtml(competition.title || competition.name || 'Конкурс')}</h3>
+                    <p style="margin:0 0 6px 0; color:#6c757d;">${escapeHtml(competition.description || competition.topic || '')}</p>
+                    ${directionsText ? `<p style="margin:0; color:#475467;font-size:13px;"><strong>Направления:</strong> ${escapeHtml(directionsText)}</p>` : ''}
+                    ${integrationBadge}`;
+
+                const searchText = competition.search_text || competition.topic || competition.description || competition.title || '';
+                sessionStorage.setItem('searchQuery', searchText);
+                loadDirections();
+                await performSearch();
+            } catch (e) {
+                console.error('Ошибка загрузки конкурса:', e);
+                alert('Не удалось загрузить конкурс. Проверьте, запущен ли модуль автоматизации и доступен ли API конкурса.');
+                window.location.href = '/';
+            }
+        }
+
+        function loadDirections() {
+            const container = document.getElementById('directionsFilter');
+            if (!container) return;
+            if (competition?.directions?.length) {
+                selectedDirections = [...competition.directions];
+                container.innerHTML = competition.directions.map((dir, idx) => `
+                    <div class="direction-checkbox-item">
+                        <input type="checkbox" id="dir_${idx}" value="${escapeAttr(dir)}" checked>
+                        <label for="dir_${idx}">${escapeHtml(dir)}</label>
+                    </div>
+                `).join('');
+                document.querySelectorAll('#directionsFilter input').forEach(cb => {
+                    cb.addEventListener('change', () => { updateSelectedDirections(); performSearch(); });
+                });
+            } else {
+                selectedDirections = [];
+                container.innerHTML = '<span style="color:#999;font-size:12px;">Направления не указаны</span>';
+            }
+        }
+
+        function updateSelectedDirections() {
+            selectedDirections = Array.from(document.querySelectorAll('#directionsFilter input:checked')).map(cb => cb.value);
+        }
+
+        function normalizeContactValue(value) {
+            if (value === null || value === undefined) return [];
+            if (Array.isArray(value)) return value.map(v => String(v).trim()).filter(Boolean);
+            const s = String(value).trim();
+            return s ? [s] : [];
+        }
+
+        function normalizeTelegram(value) {
+            let s = String(value || '').trim();
+            if (!s) return '';
+            s = s.replace('https://t.me/', '').replace('http://t.me/', '').replace('t.me/', '').replace(/^\/+|\/+$/g, '');
+            if (s.startsWith('@') || s.startsWith('+')) return s;
+            return '@' + s;
+        }
+
+        function telegramUrl(value) {
+            const tg = normalizeTelegram(value);
+            if (!tg) return '';
+            if (tg.startsWith('@')) return 'https://t.me/' + encodeURIComponent(tg.slice(1));
+            if (tg.startsWith('+')) return 'https://t.me/' + encodeURIComponent(tg);
+            return 'https://t.me/' + encodeURIComponent(tg);
+        }
+
+        function normalizePhone(value) {
+            const raw = String(value || '').trim();
+            if (!raw) return '';
+            let digits = raw.replace(/\D+/g, '');
+            if (digits.length === 11 && digits.startsWith('8')) digits = '7' + digits.slice(1);
+            if (digits.length === 10) digits = '7' + digits;
+            if (digits.length >= 10) return '+' + digits;
+            return raw;
+        }
+
+        function phoneDigits(value) {
+            return String(normalizePhone(value) || '').replace(/\D+/g, '');
+        }
+
+        function smsUrl(phone, text) {
+            const normalized = normalizePhone(phone);
+            if (!normalized) return '';
+            return `sms:${encodeURIComponent(normalized)}?body=${encodeURIComponent(text || '')}`;
+        }
+
+        function whatsappUrl(phone, text) {
+            const digits = phoneDigits(phone);
+            if (!digits) return '';
+            const encodedText = encodeURIComponent(text || '');
+            return `https://web.whatsapp.com/send?phone=${digits}&text=${encodedText}`;
+        }
+
+        function normalizeVk(value) {
+            const s = String(value || '').trim();
+            if (!s) return '';
+            if (s.startsWith('http://') || s.startsWith('https://')) return s;
+            if (s.startsWith('vk.com/')) return 'https://' + s;
+            return 'https://vk.com/' + s.replace(/^@/, '');
+        }
+
+        function getContacts(p) {
+            const raw = p.contacts || {};
+            const contacts = [];
+            const add = (type, value) => {
+                const v = String(value || '').trim();
+                if (!v || ['-', '—', 'none', 'null', 'не указан', 'не указано'].includes(v.toLowerCase())) return;
+                let normalized = v;
+                let url = '';
+                if (type === 'email') url = `mailto:${v}`;
+                if (type === 'telegram') { normalized = normalizeTelegram(v); url = telegramUrl(v); }
+                if (type === 'phone') { normalized = normalizePhone(v); url = `tel:${normalized}`; }
+                if (type === 'vk') { normalized = normalizeVk(v); url = normalized; }
+                if (!contacts.some(c => c.type === type && c.value === normalized)) {
+                    contacts.push({ type, value: normalized, url });
+                }
+            };
+
+            if (p.contacts_normalized && Array.isArray(p.contacts_normalized)) {
+                p.contacts_normalized.forEach(c => add(c.type, c.value));
+            }
+
+            if (Array.isArray(raw)) {
+                raw.forEach(c => {
+                    if (typeof c === 'string') {
+                        if (c.includes('@') && c.includes('.')) add('email', c);
+                        else if (c.startsWith('@') || c.includes('t.me/')) add('telegram', c);
+                        else if (/\d{10,}/.test(c)) add('phone', c);
+                    } else if (c && typeof c === 'object') {
+                        normalizeContactValue(c.email).forEach(v => add('email', v));
+                        normalizeContactValue(c.phone).forEach(v => add('phone', v));
+                        normalizeContactValue(c.telegram).forEach(v => add('telegram', v));
+                        normalizeContactValue(c.vk).forEach(v => add('vk', v));
+                    }
+                });
+            } else if (raw && typeof raw === 'object') {
+                normalizeContactValue(raw.email).forEach(v => add('email', v));
+                normalizeContactValue(raw.phone).forEach(v => add('phone', v));
+                normalizeContactValue(raw.telegram).forEach(v => add('telegram', v));
+                normalizeContactValue(raw.vk).forEach(v => add('vk', v));
+            }
+
+            if (p.email) add('email', p.email);
+            return contacts;
+        }
+
+        function contactsByType(p, type) {
+            return getContacts(p).filter(c => c.type === type).map(c => c.value);
+        }
+
+        function getEmails(p) { return contactsByType(p, 'email'); }
+        function getTelegrams(p) { return contactsByType(p, 'telegram'); }
+        function getPhones(p) { return contactsByType(p, 'phone'); }
+        function getVks(p) { return contactsByType(p, 'vk'); }
+        function hasEmail(p) { return getEmails(p).length > 0; }
+        function hasAnyContact(p) { return getContacts(p).length > 0; }
+
+        function authorsText(p) {
+            if (Array.isArray(p.authors)) return p.authors.join(', ');
+            return p.authors || '';
+        }
+
+        function firstAuthor(p) {
+            if (Array.isArray(p.authors) && p.authors.length) return p.authors[0];
+            if (typeof p.authors === 'string' && p.authors.trim()) return p.authors.split(',')[0].trim();
+            return '';
+        }
+
+        function cleanAuthorName(value) {
+            let s = String(value || '').trim();
+            if (!s) return '';
+            s = s.replace(/\([^)]*\)/g, ' ');
+            s = s.replace(/[:;,.]/g, ' ');
+            s = s.replace(/\s+/g, ' ').trim();
+
+            const banned = new Set(['png', 'pdf', 'xlsx', 'xls', 'docx', 'heic', 'word', 'rtf', 'txt', 'pptx', 'jpg', 'jpeg', 'исполнитель', 'презентации']);
+            const words = s.split(' ').filter(w => {
+                const clean = w.toLowerCase().replace(/[^a-zа-яё-]/gi, '');
+                return clean.length > 1 && !banned.has(clean) && !/^https?$/i.test(clean);
+            });
+
+            if (words.length < 2) return words.join(' ');
+            return words.slice(0, 2).join(' ');
+        }
+
+        function vkSearchQueriesForProject(project) {
+            const queries = [];
+            const add = value => {
+                const q = cleanAuthorName(value);
+                if (q && q.split(' ').length >= 2 && !queries.includes(q)) queries.push(q);
+            };
+
+            if (Array.isArray(project.authors)) {
+                project.authors.forEach(add);
+            } else if (typeof project.authors === 'string') {
+                project.authors.split(',').forEach(add);
+            }
+
+            if (!queries.length) add(firstAuthor(project));
+            return queries.slice(0, 3);
+        }
+
+        function vkPeopleSearchUrl(query) {
+            return `https://vk.com/search?c[q]=${encodeURIComponent(query)}&c[section]=people`;
+        }
+
+        async function performSearch() {
+            const minRel = parseInt(document.getElementById('minRelevance').value) || 0;
+            const query = sessionStorage.getItem('searchQuery') || '';
+            const urlParams = new URLSearchParams(window.location.search);
+            const competitionId = urlParams.get('external_competition_id') || urlParams.get('competition_id');
+            const externalCompetitionId = urlParams.get('external_competition_id');
+
+            let searchModeType = 'local';
+            const liveRadio = document.getElementById('searchModeLive');
+            const internalRadio = document.getElementById('searchModeInternal');
+            if (liveRadio && liveRadio.checked) searchModeType = 'live';
+            if (internalRadio && internalRadio.checked) searchModeType = 'internal';
+
+            const sources = {
+                arxiv: document.getElementById('sourceArxiv').checked,
+                openalex: document.getElementById('sourceOpenAlex').checked,
+                rospatent: document.getElementById('sourceRospatent').checked,
+                pt2035: document.getElementById('sourcePt2035').checked
+            };
+
+            setCounts('Поиск проектов...', 'Поиск проектов...');
+            document.getElementById('emailProjectsContainer').innerHTML = '';
+            document.getElementById('vkProjectsContainer').innerHTML = '';
+
+            try {
+                let results = [];
+
+                if (searchModeType === 'live') {
+                    results = await fetchJsonResults('/api/search_live', { query, min_relevance: minRel, sources, limit: 50 });
+                } else if (searchModeType === 'internal') {
+                    results = [];
+                    setCounts('Поиск в своей базе: демо-режим', 'Результаты будут доступны после подключения базы платформы');
+                    document.getElementById('emailProjectsContainer').innerHTML = emptyBlock('Режим «Своя база» пока является заглушкой. Он предназначен для будущей интеграции с базой платформы/CRM заказчика.');
+                    document.getElementById('vkProjectsContainer').innerHTML = emptyBlock('После подключения внешней базы здесь будут отображаться проекты без контактов.');
+                    allResults = [];
+                    emailProjectsData = [];
+                    vkProjectsData = [];
+                    return;
+                } else {
+                    results = await fetchJsonResults('/api/search_with_filters', {
+                        query,
+                        min_relevance: minRel,
+                        competition_id: competitionId,
+                        external_competition_id: externalCompetitionId,
+                        sources,
+                        directions: selectedDirections
+                    });
+                }
+
+                allResults = results;
+                emailProjectsData = results.filter(p => hasAnyContact(p));
+                vkProjectsData = results.filter(p => !hasAnyContact(p));
+
+                displayEmailProjects(emailProjectsData);
+                displayVkProjects(vkProjectsData);
+                setCounts(`Проектов с контактами: ${emailProjectsData.length}`, `Проектов без контактов: ${vkProjectsData.length}`);
+
+                if (results.length === 0 && searchModeType !== 'internal') {
+                    document.getElementById('emailProjectsContainer').innerHTML = emptyBlock('Проекты не найдены. Попробуйте изменить параметры поиска.');
+                    document.getElementById('vkProjectsContainer').innerHTML = emptyBlock('Проекты без контактов не найдены.');
+                }
+            } catch (error) {
+                console.error('Ошибка поиска:', error);
+                setCounts('Ошибка поиска', 'Ошибка поиска');
+                const msg = escapeHtml(error.message || 'Неизвестная ошибка');
+                document.getElementById('emailProjectsContainer').innerHTML = emptyBlock(`Ошибка: ${msg}`);
+            }
+        }
+
+        async function fetchJsonResults(url, payload) {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const text = await response.text();
+            let data;
+            try {
+                data = JSON.parse(text);
+            } catch (e) {
+                throw new Error(`Сервер вернул не JSON. HTTP ${response.status}`);
+            }
+            if (!response.ok) {
+                throw new Error(data.error || `HTTP ${response.status}`);
+            }
+            return data.results || [];
+        }
+
+        function setCounts(emailText, vkText) {
+            document.getElementById('emailCount').textContent = emailText;
+            document.getElementById('vkCount').textContent = vkText;
+        }
+
+        function emptyBlock(text) {
+            return `<div style="text-align:center; padding:40px; color:#6c757d;">${text}</div>`;
+        }
+
+        function displayEmailProjects(projects) {
+            const container = document.getElementById('emailProjectsContainer');
+            if (!projects.length) {
+                container.innerHTML = emptyBlock('Проектов с контактами нет.');
+                return;
+            }
+            container.innerHTML = projects.map((p, idx) => projectCard(p, idx, 'email')).join('');
+        }
+
+        function displayVkProjects(projects) {
+            const container = document.getElementById('vkProjectsContainer');
+            if (!projects.length) {
+                container.innerHTML = emptyBlock('Проектов без контактов нет.');
+                return;
+            }
+            container.innerHTML = projects.map((p, idx) => projectCard(p, idx, 'vk')).join('');
+        }
+
+        function contactBadges(p) {
+            const contacts = getContacts(p);
+            if (!contacts.length) return '<div class="project-authors"><b>Контакты:</b> не указаны</div>';
+            return `<div class="project-authors"><b>Контакты:</b> ${contacts.map(c => {
+                const label = c.type === 'email' ? 'Email' : c.type === 'telegram' ? 'Telegram' : c.type === 'phone' ? 'Телефон' : 'VK';
+                return `<span style="display:inline-block;margin:2px 6px 2px 0;padding:3px 8px;border-radius:12px;background:#eef2ff;">${label}: ${escapeHtml(c.value)}</span>`;
+            }).join('')}</div>`;
+        }
+
+        function inviteButtons(p) {
+            const contacts = getContacts(p);
+            if (!contacts.length) return '';
+            const subject = `Приглашение к участию в конкурсе ${competition?.title || ''}`.trim();
+            const competitionLink = competition?.public_url || `https://example.org/competitions/${competition?.id || 'demo'}`;
+            const body = `Здравствуйте!\n\nПриглашаем вас принять участие в конкурсе "${competition?.title || ''}".\n\nТематика конкурса: ${competition?.topic || ''}\n\nВаш проект был найден как потенциально релевантный направлению конкурса. При заинтересованности просим ознакомиться с условиями и подать заявку.\n\nСсылка на конкурс: ${competitionLink}\n\nС уважением,\nОрганизаторы конкурса`;
+            return `<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">${contacts.map(c => {
+                if (c.type === 'email') {
+                    const url = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(c.value)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+                    return `<a class="btn-action btn-primary" style="text-decoration:none;" href="${url}" target="_blank">Email</a>`;
+                }
+                if (c.type === 'telegram') {
+                    const url = telegramUrl(c.value);
+                    return `<a class="btn-action btn-primary" style="text-decoration:none;" href="${url}" target="_blank">Telegram</a>`;
+                }
+                if (c.type === 'vk') {
+                    const url = normalizeVk(c.value);
+                    return `<a class="btn-action btn-vk-export" style="text-decoration:none;" href="${url}" target="_blank">VK</a>`;
+                }
+                if (c.type === 'phone') {
+                    const sms = smsUrl(c.value, body);
+                    const wa = whatsappUrl(c.value, body);
+                    return `
+                        <a class="btn-action btn-primary" style="text-decoration:none;" href="${sms}">SMS</a>
+                        <a class="btn-action btn-vk-export" style="text-decoration:none;" href="${wa}" target="_blank">WhatsApp</a>
+                    `;
+                }
+                return '';
+            }).join('')}</div>`;
+        }
+
+        function projectCard(p, idx, type) {
+            const url = p.url || '#';
+            const title = p.title || 'Без названия';
+            const relevance = p.relevance_percent ?? Math.round((p.relevance || 0) * 1000) / 10;
+            const abstract = p.abstract ? String(p.abstract).slice(0, 500) : 'Аннотация отсутствует';
+            return `
+                <div class="project-card">
+                    <div class="card-header">
+                        <input class="project-checkbox ${type}-checkbox" type="checkbox" data-index="${idx}">
+                        <div class="project-content">
+                            <div class="project-title"><a href="${escapeAttr(url)}" target="_blank">${escapeHtml(title)}</a></div>
+                            <div class="project-authors"><b>Авторы:</b> ${escapeHtml(authorsText(p) || 'Не указаны')}</div>
+                            ${contactBadges(p)}
+                            <div class="project-meta">
+                                <span class="source">${escapeHtml(p.source || 'Источник не указан')}</span>
+                                <span class="relevance">Релевантность: ${escapeHtml(String(relevance || 0))}%</span>
+                            </div>
+                            <div class="project-abstract">${escapeHtml(abstract)}${String(abstract).length >= 500 ? '...' : ''}</div>
+                            ${inviteButtons(p)}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function selectedProjects(type) {
+            const data = type === 'email' ? emailProjectsData : vkProjectsData;
+            return Array.from(document.querySelectorAll(`.${type}-checkbox:checked`))
+                .map(cb => data[parseInt(cb.dataset.index)])
+                .filter(Boolean);
+        }
+
+        function toggleAll(type) {
+            const boxes = Array.from(document.querySelectorAll(`.${type}-checkbox`));
+            const shouldCheck = boxes.some(cb => !cb.checked);
+            boxes.forEach(cb => cb.checked = shouldCheck);
+        }
+
+        function getInvitationPayload() {
+            const subject = `Приглашение к участию в конкурсе ${competition?.title || ''}`.trim();
+            const competitionLink = competition?.public_url || `https://example.org/competitions/${competition?.id || 'demo'}`;
+            const body = `Здравствуйте!
+
+Приглашаем вас принять участие в конкурсе "${competition?.title || ''}".
+
+Тематика конкурса: ${competition?.topic || ''}
+
+Ваш проект был найден как потенциально релевантный направлению конкурса. При заинтересованности просим ознакомиться с условиями и подать заявку.
+
+Ссылка на конкурс: ${competitionLink}
+
+С уважением,
+Организаторы конкурса`;
+            const shortBody = `Здравствуйте! Приглашаем вас принять участие в конкурсе "${competition?.title || ''}". Ваш проект найден как релевантный тематике конкурса. Ссылка: ${competitionLink}`;
+            return { subject, body, shortBody };
+        }
+
+        function uniqueValues(values) {
+            return [...new Set(values.map(v => String(v || '').trim()).filter(Boolean))];
+        }
+
+        function buildInviteQueue(projects) {
+            const payload = getInvitationPayload();
+            const emails = uniqueValues(projects.flatMap(getEmails));
+            const telegrams = uniqueValues(projects.flatMap(getTelegrams));
+            const phones = uniqueValues(projects.flatMap(getPhones));
+            const vks = uniqueValues(projects.flatMap(getVks));
+            const queue = [];
+
+            if (emails.length) {
+                queue.push({
+                    channel: 'Email',
+                    target: `${emails.length} получател(ей)`,
+                    details: emails.join(', '),
+                    url: `https://mail.google.com/mail/?view=cm&fs=1&bcc=${encodeURIComponent(emails.join(','))}&su=${encodeURIComponent(payload.subject)}&body=${encodeURIComponent(payload.body)}`,
+                    text: payload.body,
+                    status: 'pending'
+                });
+            }
+
+            telegrams.forEach(tg => {
+                const url = telegramUrl(tg);
+                if (url) {
+                    queue.push({
+                        channel: 'Telegram',
+                        target: tg,
+                        details: 'Откроется чат/профиль. Текст приглашения будет скопирован в буфер обмена.',
+                        url,
+                        text: payload.shortBody,
+                        status: 'pending'
+                    });
+                }
+            });
+
+            phones.forEach(phone => {
+                const sms = smsUrl(phone, payload.body);
+                if (sms) {
+                    queue.push({
+                        channel: 'SMS',
+                        target: phone,
+                        details: 'Откроется приложение SMS, если оно настроено на устройстве.',
+                        url: sms,
+                        text: payload.body,
+                        status: 'pending'
+                    });
+                }
+                const wa = whatsappUrl(phone, payload.shortBody);
+                if (wa) {
+                    queue.push({
+                        channel: 'WhatsApp',
+                        target: phone,
+                        details: 'Откроется WhatsApp Web. Если аккаунт уже подключен, откроется чат с контактом.',
+                        url: wa,
+                        text: payload.shortBody,
+                        status: 'pending'
+                    });
+                }
+            });
+
+            vks.forEach(vk => {
+                const url = normalizeVk(vk);
+                if (url) {
+                    queue.push({
+                        channel: 'VK',
+                        target: vk,
+                        details: 'Откроется профиль/страница VK. Текст приглашения будет скопирован в буфер обмена.',
+                        url,
+                        text: payload.shortBody,
+                        status: 'pending'
+                    });
+                }
+            });
+
+            return queue;
+        }
+
+        async function copyTextToClipboard(text) {
+            if (!text) return false;
+            try {
+                if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(text);
+                    return true;
+                }
+            } catch (e) {
+                console.warn('Clipboard API недоступен:', e);
+            }
+
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.setAttribute('readonly', '');
+            textarea.style.position = 'fixed';
+            textarea.style.left = '-9999px';
+            document.body.appendChild(textarea);
+            textarea.select();
+            let copied = false;
+            try { copied = document.execCommand('copy'); } catch (e) { copied = false; }
+            textarea.remove();
+            return copied;
+        }
+
+        function renderInviteQueue() {
+            const modal = document.getElementById('inviteQueueModal');
+            const title = document.getElementById('inviteQueueTitle');
+            const note = document.getElementById('inviteQueueNote');
+            const currentBox = document.getElementById('inviteCurrentAction');
+            const list = document.getElementById('inviteQueueList');
+
+            if (inviteQueueMode === 'vk_search') {
+                title.textContent = 'Последовательный поиск авторов в VK';
+                note.textContent = 'Система открывает поисковые страницы VK по фамилии и имени автора. Текст приглашения копируется в буфер обмена, но выбрать точный профиль и отправить сообщение нужно вручную: VK не позволяет надежно отправлять сообщения незнакомым пользователям без авторизации и выбора конкретного аккаунта.';
+            } else {
+                title.textContent = 'Последовательная отправка приглашений';
+                note.textContent = 'Система открывает каналы связи по очереди. Текст приглашения автоматически копируется в буфер обмена, чтобы его можно было вставить в Telegram, VK или SMS. Для Gmail, SMS и WhatsApp текст подставляется в ссылку автоматически, если это поддерживается браузером и приложением.';
+            }
+
+            if (!inviteQueue.length) {
+                currentBox.innerHTML = 'Нет доступных каналов для отправки.';
+                list.innerHTML = '';
+                modal.style.display = 'flex';
+                return;
+            }
+
+            const current = inviteQueue[inviteQueueIndex];
+            if (!current) {
+                currentBox.innerHTML = '<b>Все каналы обработаны.</b><div>Проверьте открытые вкладки и отправьте сообщения вручную там, где это требуется.</div>';
+            } else {
+                currentBox.innerHTML = `
+                    <b>${inviteQueueIndex + 1} из ${inviteQueue.length}: ${escapeHtml(current.channel)}</b>
+                    <div><b>Получатель / запрос:</b> ${escapeHtml(current.target)}</div>
+                    <div>${escapeHtml(current.details || '')}</div>
+                `;
+            }
+
+            list.innerHTML = inviteQueue.map((item, i) => {
+                const cls = i < inviteQueueIndex ? 'done' : i === inviteQueueIndex ? 'active' : '';
+                const mark = i < inviteQueueIndex ? '✓' : i === inviteQueueIndex ? '→' : i + 1;
+                return `
+                    <div class="invite-queue-row ${cls}">
+                        <div>${mark}</div>
+                        <div>${escapeHtml(item.channel)}</div>
+                        <div>${escapeHtml(item.target)}</div>
+                    </div>
+                `;
+            }).join('');
+
+            modal.style.display = 'flex';
+        }
+
+        async function openCurrentInviteAction() {
+            const action = inviteQueue[inviteQueueIndex];
+            if (!action) return;
+            await copyTextToClipboard(action.text || '');
+
+            if (action.channel === 'SMS') {
+                const a = document.createElement('a');
+                a.href = action.url;
+                a.style.display = 'none';
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+            } else {
+                window.open(action.url, '_blank', 'noopener,noreferrer');
+            }
+
+            action.status = 'opened';
+            renderInviteQueue();
+        }
+
+        function moveToNextInviteAction() {
+            if (inviteQueueIndex < inviteQueue.length) {
+                inviteQueueIndex += 1;
+            }
+            renderInviteQueue();
+        }
+
+        function sendEmailInvitations() {
+            const selected = selectedProjects('email');
+            if (!selected.length) {
+                alert('Выберите проекты с контактами.');
+                return;
+            }
+
+            inviteQueue = buildInviteQueue(selected);
+            inviteQueueIndex = 0;
+            inviteQueueMode = 'channels';
+            renderInviteQueue();
+        }
+
+        function mergeUniqueProjects(...groups) {
+            const map = new Map();
+            groups.flat().filter(Boolean).forEach(p => {
+                const key = p.id || p.url || `${p.title || ''}_${p.source || ''}`;
+                if (!map.has(key)) map.set(key, p);
+            });
+            return Array.from(map.values());
+        }
+
+        function exportAllProjects() {
+            const projects = mergeUniqueProjects(allResults, emailProjectsData, vkProjectsData);
+            exportProjects(projects);
+        }
+
+        async function exportProjects(projects) {
+            if (!projects.length) {
+                alert('Нет проектов для экспорта.');
+                return;
+            }
+            const response = await fetch('/export', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ results: projects })
+            });
+            if (!response.ok) {
+                const text = await response.text();
+                alert(`Ошибка экспорта: ${text}`);
+                return;
+            }
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `projects_export_${new Date().toISOString().slice(0,19).replace(/[:T]/g,'-')}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url);
+        }
+
+        function startVkSearch() {
+            const selected = selectedProjects('vk');
+            if (!selected.length) {
+                alert('Выберите проекты без контактов.');
+                return;
+            }
+            const tbody = document.getElementById('vkResultsBody');
+            vkSearchResults = [];
+            tbody.innerHTML = '';
+
+            selected.forEach(project => {
+                const queries = vkSearchQueriesForProject(project);
+                queries.forEach(query => {
+                    const url = vkPeopleSearchUrl(query);
+                    vkSearchResults.push({
+                        project: project.title || '',
+                        author: query,
+                        url,
+                        text: getInvitationPayload().shortBody
+                    });
+                    tbody.insertAdjacentHTML('beforeend', `
+                        <tr>
+                            <td>${escapeHtml(project.title || '')}</td>
+                            <td>${escapeHtml(query)}</td>
+                            <td><button class="send-vk-btn" onclick="window.open('${url}', '_blank')">Открыть поиск VK</button></td>
+                        </tr>
+                    `);
+                });
+            });
+
+            document.getElementById('vkResultsSection').style.display = vkSearchResults.length ? 'block' : 'none';
+            document.getElementById('floatingButtons').style.display = vkSearchResults.length ? 'flex' : 'none';
+            if (vkSearchResults.length) {
+                document.getElementById('vkResultsSection').scrollIntoView({ behavior: 'smooth' });
+            } else {
+                alert('Не удалось сформировать поисковые запросы: у выбранных проектов не указаны ФИО авторов.');
+            }
+        }
+
+        function buildVkSearchQueue() {
+            const payload = getInvitationPayload();
+            return vkSearchResults.map(item => ({
+                channel: 'VK поиск',
+                target: item.author,
+                details: `Проект: ${item.project || 'без названия'}. Откроется поиск людей во VK по фамилии и имени. Текст приглашения будет скопирован в буфер обмена.`,
+                url: item.url,
+                text: payload.shortBody,
+                status: 'pending'
+            }));
+        }
+
+        function openVkQueue() {
+            if (!vkSearchResults.length) {
+                alert('Сначала нажмите «Поиск в VK», чтобы сформировать таблицу поисковых запросов.');
+                return;
+            }
+            inviteQueue = buildVkSearchQueue();
+            inviteQueueIndex = 0;
+            inviteQueueMode = 'vk_search';
+            renderInviteQueue();
+        }
+
+        function openAllVk() {
+            if (!vkSearchResults.length) {
+                alert('Сначала нажмите «Поиск в VK», чтобы сформировать таблицу поисковых запросов.');
+                return;
+            }
+            vkSearchResults.forEach(item => window.open(item.url, '_blank'));
+        }
+
+        function exportVkTable() {
+            const rows = vkSearchResults.map(x => ({
+                title: x.project,
+                authors: [x.author],
+                source: 'VK search',
+                relevance_percent: '',
+                contacts: [],
+                url: x.url,
+                abstract: ''
+            }));
+            exportProjects(rows);
+        }
+
+        function escapeHtml(s) {
+            if (s === null || s === undefined) return '';
+            return String(s).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' })[m]);
+        }
+
+        function escapeAttr(s) { return escapeHtml(s); }
+
+        document.getElementById('applyFiltersBtn').onclick = () => performSearch();
+        document.getElementById('toggleAllEmailBtn').onclick = () => toggleAll('email');
+        document.getElementById('toggleAllVkBtn').onclick = () => toggleAll('vk');
+        document.getElementById('sendEmailBtn').onclick = () => sendEmailInvitations();
+        document.getElementById('exportEmailBtn').onclick = () => exportProjects(emailProjectsData);
+        document.getElementById('exportAllBtn').onclick = () => exportAllProjects();
+        document.getElementById('exportVkBtn').onclick = () => exportProjects(vkProjectsData);
+        document.getElementById('startVkSearchBtn').onclick = () => startVkSearch();
+        document.getElementById('openVkQueueBtn').onclick = () => openVkQueue();
+        document.getElementById('sendAllVkBtn').onclick = () => openAllVk();
+        document.getElementById('exportVkTableBtn').onclick = () => exportVkTable();
+        document.getElementById('closeProgressBtn').onclick = () => document.getElementById('progressModal').style.display = 'none';
+        document.getElementById('openCurrentInviteBtn').onclick = () => openCurrentInviteAction();
+        document.getElementById('openNextInviteBtn').onclick = () => moveToNextInviteAction();
+        document.getElementById('copyInviteTextBtn').onclick = async () => {
+            const action = inviteQueue[inviteQueueIndex];
+            if (!action) return;
+            const copied = await copyTextToClipboard(action.text || '');
+            alert(copied ? 'Текст приглашения скопирован.' : 'Не удалось скопировать текст автоматически.');
+        };
+        document.getElementById('closeInviteQueueBtn').onclick = () => document.getElementById('inviteQueueModal').style.display = 'none';
+        document.getElementById('scrollToProjectsBtn').onclick = () => document.querySelector('.tabs-container').scrollIntoView({ behavior: 'smooth' });
+        document.getElementById('scrollToResultsBtn').onclick = () => document.getElementById('vkResultsSection').scrollIntoView({ behavior: 'smooth' });
+
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById(`tab-${btn.dataset.tab}`).classList.add('active');
+            });
+        });
+
+        ['searchModeLocal', 'searchModeLive', 'searchModeInternal', 'sourceArxiv', 'sourceOpenAlex', 'sourceRospatent', 'sourcePt2035'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.addEventListener('change', () => performSearch());
+        });
+
+        loadCompetition();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Панель эксперта{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="expert-header">
+        <h1>Здравствуйте, {{ expert_name }}!</h1>
+        <a href="/expert/logout" class="btn btn-outline">Выйти</a>
+    </div>
+
+    <!-- Уведомления -->
+    {% if notifications %}
+    <div class="card" style="margin-bottom: 20px; border-left: 4px solid #f57c00;">
+        <div class="card-header">
+            <h3>Требуется пересмотр оценок</h3>
+        </div>
+        {% for notification in notifications %}
+        <div style="padding: 15px; border-bottom: 1px solid #e2e8f0;">
+            <p><strong>Проект:</strong> {{ notification.project_name }}</p>
+            <p><strong>Критерий:</strong> {{ notification.criteria }}</p>
+            <p><strong>Ваша оценка:</strong> {{ notification.current_score }} / 10</p>
+            <p><strong>Рекомендуемая оценка:</strong> {{ notification.recommended_score }} / 10</p>
+            <a href="/expert/evaluate/{{ notification.project_expert_id }}" class="btn btn-sm btn-primary">Пересмотреть</a>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Проекты для оценки -->
+    <div class="card">
+        <div class="card-header">
+            <h2>Проекты для оценки</h2>
+        </div>
+
+        {% if projects %}
+            {% for project in projects %}
+            <div class="project-card" style="margin-bottom: 20px; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h3>{{ project.project_name }}</h3>
+                    <span class="status-badge {% if project.pe_status == 'pending' %}status-review{% else %}status-approved{% endif %}">
+                        {{ 'Ожидает оценки' if project.pe_status == 'pending' else 'В процессе' }}
+                    </span>
+                </div>
+                <p><strong>Заявитель:</strong> {{ project.applicant_name }}</p>
+                <p><strong>Конкурс:</strong> {{ project.contest or 'Не указан' }}</p>
+                <p><strong>Запрашиваемая сумма:</strong> {{ "{:,.0f}".format(project.amount) }} ₽</p>
+
+                <div style="margin-top: 15px;">
+                    {% if project.has_scores %}
+                        <a href="/expert/evaluate/{{ project.pe_id }}" class="btn btn-outline">Редактировать оценки</a>
+                    {% else %}
+                        <a href="/expert/evaluate/{{ project.pe_id }}" class="btn btn-primary">Оценить проект</a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <p>Нет проектов для оценки</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

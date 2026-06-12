@@ -1,0 +1,16 @@
+.git/
+.idea/
+.vscode/
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.bak
+*.log
+.env
+uploads/
+cert.pem
+key.pem
+модуль_автоматизации/uploads/*
+!модуль_автоматизации/uploads/.gitkeep
+модуль_поиска/data/users.sqlite3

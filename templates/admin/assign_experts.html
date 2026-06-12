@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Назначение экспертов{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h2>Назначение экспертов на проекты</h2>
+            <a href="/admin/auto_assign" class="btn btn-primary">Автоматическое назначение</a>
+        </div>
+
+        {% if applications %}
+            {% for app in applications %}
+            <div class="project-card" style="margin-bottom: 20px; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px;">
+                <h3>{{ app.project_name }}</h3>
+                <p><strong>Заявитель:</strong> {{ app.full_name }}</p>
+                <p><strong>Конкурс:</strong> {{ app.contest or 'Не указан' }}</p>
+                <p><strong>Направление:</strong> {{ app.direction or 'Не указано' }}</p>
+
+                <form method="POST" action="/admin/assign_experts/do">
+                    <input type="hidden" name="application_id" value="{{ app.id }}">
+
+                    <div class="form-group">
+                        <label>Выберите экспертов (минимум 2, максимум 3):</label>
+                        <select name="expert_ids" multiple required size="5" class="form-control">
+                            {% for expert in experts %}
+                            <option value="{{ expert.id }}">
+                                {{ expert.full_name }} - {{ expert.expertise_areas|join(', ') }} (рейтинг: {{ expert.rating }})
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <small>Удерживайте Ctrl для выбора нескольких экспертов</small>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Назначить экспертов</button>
+                </form>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <p>Нет заявок, требующих назначения экспертов</p>
+                <a href="/admin/dashboard" class="btn btn-outline">← Назад</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

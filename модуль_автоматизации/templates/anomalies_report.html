@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block title %}Аномалии в оценках экспертов - ВКонкурсе{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="breadcrumbs">
+        <a href="/admin/dashboard?contest_id={{ request.args.get('contest_id', '') }}">← Назад к панели</a>
+        <span>/</span>
+        <span>Аномалии в оценках</span>
+    </div>
+
+    {% if anomalies and anomalies|length > 0 %}
+    <div class="stats-grid" style="margin-bottom: 20px;">
+        <div class="stat-card">
+            <div class="stat-number">{{ anomalies|length }}</div>
+            <div class="stat-label">Проектов с аномалиями</div>
+        </div>
+    </div>
+
+    {% for anomaly in anomalies %}
+    <div class="anomaly-card">
+        <div class="anomaly-title">
+            <i class="fas fa-exclamation-triangle"></i> {{ anomaly.project_name }}
+            <span class="warning-badge">Обнаружены расхождения</span>
+        </div>
+        <p><strong>Заявитель:</strong> {{ anomaly.applicant_name }}</p>
+        <p><strong>Средний балл:</strong> {{ "%.1f"|format(anomaly.average_score) }}</p>
+
+        {% if anomaly.report_data %}
+        <div class="anomaly-detail">
+            <strong>Детали аномалий:</strong>
+            <ul class="anomaly-list">
+                {% set report = anomaly.report_data|from_json if anomaly.report_data is string else anomaly.report_data %}
+                {% if report and report.anomalies %}
+                    {% for a in report.anomalies %}
+                    <li>
+                        <strong>{{ a.criteria }}</strong><br>
+                        Эксперт <strong>{{ a.expert }}</strong> поставил {{ a.score }} баллов<br>
+                        Средняя оценка других экспертов: {{ a.mean }} баллов
+                        <span class="deviation-badge">отклонение {{ a.deviation }}</span>
+                    </li>
+                    {% endfor %}
+                {% else %}
+                    <li>Данные аномалий не загружены</li>
+                {% endif %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <div class="anomaly-actions">
+            <a href="/admin/application/{{ anomaly.application_id }}" class="btn btn-sm btn-primary">
+                <i class="fas fa-eye"></i> Подробнее о проекте
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-check-circle" style="font-size: 64px; color: #a8c9a8;"></i>
+        <h3>Отлично!</h3>
+        <p>Аномалий в оценках экспертов не обнаружено.</p>
+        <p>Все эксперты оценивают проекты объективно.</p>
+        <a href="/admin/dashboard?contest_id={{ request.args.get('contest_id', '') }}" class="btn btn-primary">
+            Вернуться в панель
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.breadcrumbs {
+    margin-bottom: 24px;
+    padding: 12px 0;
+    color: #64748b;
+}
+.breadcrumbs a {
+    color: #7c9bc0;
+    text-decoration: none;
+}
+.anomaly-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-left: 4px solid #e8c9b0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.anomaly-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.warning-badge {
+    background: #e8c9b0;
+    color: #2c3e50;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+.anomaly-detail {
+    background: #fff8f0;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 15px 0;
+}
+.anomaly-list {
+    list-style: none;
+    padding-left: 0;
+    margin-top: 10px;
+}
+.anomaly-list li {
+    padding: 10px 0;
+    border-bottom: 1px solid #e2e8f0;
+}
+.deviation-badge {
+    display: inline-block;
+    background: #d4a5a5;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    margin-left: 10px;
+}
+.anomaly-actions {
+    margin-top: 15px;
+}
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    background: white;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+}
+.empty-state h3 {
+    margin: 20px 0 10px;
+}
+.empty-state p {
+    color: #64748b;
+    margin-bottom: 8px;
+}
+</style>
+{% endblock %}

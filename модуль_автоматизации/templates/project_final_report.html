@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Итоговый отчет по проекту</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .report-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .info-block {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .info-row {
+            display: flex;
+            margin-bottom: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .info-label {
+            width: 200px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        .info-value {
+            flex: 1;
+            color: #64748b;
+        }
+        .score-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        .score-table th, .score-table td {
+            border: 1px solid #e2e8f0;
+            padding: 10px;
+            text-align: center;
+        }
+        .score-table th {
+            background: #1e3c72;
+            color: white;
+        }
+        .score-table tr:hover {
+            background: #f8fafc;
+        }
+        .average-row {
+            background: #e2e8f0;
+            font-weight: bold;
+        }
+        .status-recommended {
+            background: #7c9bc0;
+            color: white;
+            padding: 8px 24px;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: 500;
+            display: inline-block;
+        }
+        .status-winner {
+            background: #d4a5a5;
+            color: #2c3e50;
+            padding: 8px 24px;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: 500;
+            display: inline-block;
+        }
+        .status-revision {
+            background: #e8c9b0;
+            color: #2c3e50;
+            padding: 8px 24px;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: 500;
+            display: inline-block;
+        }
+        .status-rejected {
+            background: #f0d6d6;
+            color: #2c3e50;
+            padding: 8px 24px;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: 500;
+            display: inline-block;
+        }
+        .final-score-value {
+            font-size: 48px;
+            font-weight: bold;
+            color: #1e3c72;
+        }
+        @media print {
+            .no-print { display: none; }
+            .info-block { break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+    <div class="report-container">
+        <div class="no-print" style="margin-bottom: 20px; display: flex; gap: 10px;">
+            <button onclick="window.print()" class="btn btn-primary">Печать отчета</button>
+            <a href="/admin/project_experts" class="btn btn-secondary">Назад к списку</a>
+        </div>
+
+        {% if report %}
+        <div class="info-block">
+            <h2 style="text-align: center; margin-bottom: 20px;">Итоговый отчет по проекту</h2>
+
+            <div class="info-row">
+                <div class="info-label">Название проекта:</div>
+                <div class="info-value">{{ report.project_name }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Заявитель:</div>
+                <div class="info-value">{{ report.full_name }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Направление:</div>
+                <div class="info-value">{{ report.direction }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Запрашиваемая сумма:</div>
+                <div class="info-value">{{ "{:,.0f}".format(report.amount) if report.amount else 0 }} ₽</div>
+            </div>
+        </div>
+
+        <!-- Таблица оценок экспертов -->
+        <div class="info-block">
+            <h3>Оценки экспертов</h3>
+
+            <table class="score-table">
+                <thead>
+                    <tr>
+                        <th>Эксперт</th>
+                        <th>Актуальность<br>(0-10)</th>
+                        <th>Новизна<br>(0-10)</th>
+                        <th>Реализуемость<br>(0-10)</th>
+                        <th>Команда<br>(0-10)</th>
+                        <th>Бюджет<br>(0-10)</th>
+                        <th>Среднее<br>эксперта</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% set criteria_list = ['Актуальность', 'Новизна', 'Реализуемость', 'Команда', 'Бюджет'] %}
+                    {% set expert_avatars = [] %}
+                    {% set criteria_sums = {'Актуальность': 0, 'Новизна': 0, 'Реализуемость': 0, 'Команда': 0, 'Бюджет': 0} %}
+                    {% set expert_count = expert_scores|length %}
+
+                    {% for expert_name, scores in expert_scores.items() %}
+                        {% set expert_sum = 0 %}
+                    <tr>
+                        <td><strong>{{ expert_name }}</strong></td>
+                        {% for criteria in criteria_list %}
+                            {% set score = scores.get(criteria, '-') %}
+                            <td>
+                                {% if score != '-' %}
+                                    {{ score }}
+                                    {% set _ = criteria_sums.update({criteria: criteria_sums[criteria] + score}) %}
+                                    {% set expert_sum = expert_sum + score %}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                        {% endfor %}
+                        {% set expert_avg = (expert_sum / 5)|round(1) if expert_sum > 0 else 0 %}
+                        <td><strong>{{ expert_avg }}</strong></td>
+                        {% set _ = expert_avatars.append(expert_avg) %}
+                    </tr>
+                    {% endfor %}
+
+                    <!-- Строка со средними по критериям -->
+                    {% if expert_count > 0 %}
+                    <tr class="average-row">
+                        <td><strong>Среднее по критерию</strong></td>
+                        {% for criteria in criteria_list %}
+                            <td><strong>{{ (criteria_sums[criteria] / expert_count)|round(1) }}</strong></td>
+                        {% endfor %}
+                        <td><strong>{{ total_avg|round(1) if total_avg else 0 }}</strong></td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Итоговый балл -->
+        <div class="info-block" style="text-align: center;">
+            <h3>Итоговый балл проекта</h3>
+            <div>
+                <span class="final-score-value">{{ final_score_100|round(1) if final_score_100 else 0 }}</span>
+                <span style="font-size: 24px;"> / 100</span>
+            </div>
+        </div>
+
+        <!-- Решение комиссии -->
+        <div class="info-block" style="text-align: center;">
+            <h3>Решение комиссии</h3>
+            <div style="margin-top: 15px;">
+                {% if report.final_status == 'Победитель' %}
+                    <span class="status-winner">Победитель</span>
+                {% elif report.final_status == 'Рекомендовано' %}
+                    <span class="status-recommended">Рекомендовано</span>
+                {% elif report.final_status == 'На доработку' %}
+                    <span class="status-revision">На доработку</span>
+                {% elif report.final_status == 'Отклонено' %}
+                    <span class="status-rejected">Отклонено</span>
+                {% else %}
+                    <span class="status-recommended">{{ report.final_status }}</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Аномалии если есть -->
+        {% if report.anomaly_detected %}
+        <div class="info-block">
+            <h3>Обнаружены аномалии в оценках</h3>
+            {% if report.report_data %}
+                {% set report_data = report.report_data|from_json if report.report_data is string else report.report_data %}
+                {% if report_data.anomalies %}
+                    <ul>
+                    {% for anomaly in report_data.anomalies %}
+                        <li>
+                            <strong>{{ anomaly.criteria }}</strong>:
+                            Эксперт {{ anomaly.expert_name }} поставил {{ anomaly.score }}
+                            (среднее {{ anomaly.mean }}) - отклонение {{ anomaly.deviation }} балла
+                        </li>
+                    {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>Данные об аномалиях отсутствуют</p>
+                {% endif %}
+            {% else %}
+                <p>Подробные данные отсутствуют</p>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- Рекомендации -->
+        <div class="info-block">
+            <h3>Рекомендации</h3>
+            {% if report.final_status == 'Победитель' %}
+                <p>Проект рекомендуется к финансированию в приоритетном порядке. Высокие оценки по всем критериям.</p>
+            {% elif report.final_status == 'Рекомендовано' %}
+                <p>Проект рекомендуется к финансированию при наличии свободных средств. Требуется незначительная доработка.</p>
+            {% elif report.final_status == 'На доработку' %}
+                <p>Проект требует доработки и повторного рассмотрения экспертной комиссией. Обратить внимание на критерии с низкими оценками.</p>
+            {% elif report.final_status == 'Отклонено' %}
+                <p>Проект не рекомендуется к финансированию. Существенные недостатки по ключевым критериям.</p>
+            {% else %}
+                <p>Решение по проекту еще не принято.</p>
+            {% endif %}
+        </div>
+
+        {% else %}
+        <div class="info-block">
+            <p style="text-align: center;">Отчет по проекту не найден. Возможно, эксперты еще не оценили проект.</p>
+        </div>
+        {% endif %}
+
+        <div class="no-print" style="text-align: center; margin-top: 30px;">
+            <a href="/admin/project_experts" class="btn btn-secondary">Вернуться к списку проектов</a>
+        </div>
+    </div>
+</body>
+</html>

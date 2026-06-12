@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block title %}Назначение экспертов - ВКонкурсе{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="breadcrumbs">
+        <a href="/admin/dashboard?contest_id={{ request.args.get('contest_id', '') }}">← Назад к панели</a>
+        <span>/</span>
+        <span>Назначение экспертов</span>
+    </div>
+
+    {% if assignments and assignments|length > 0 %}
+    <div class="card">
+        <div class="card-header">
+            <h2>Результат назначения экспертов</h2>
+            <span class="status-badge status-approved">Обработано: {{ total }}</span>
+        </div>
+
+        {% for assign in assignments %}
+        <div class="assignment-card">
+            <div class="assignment-header">
+                <h3>{{ assign.project_name }}</h3>
+                <span class="direction-badge">{{ assign.direction }}</span>
+            </div>
+            <div class="experts-list">
+                <strong>Назначенные эксперты:</strong>
+                <ul>
+                    {% for expert in assign.expert_names %}
+                    <li>{{ expert }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endfor %}
+
+        <div class="text-center mt-20">
+            <a href="/admin/project_experts?contest_id={{ request.args.get('contest_id', '') }}" class="btn btn-primary">
+                Посмотреть все назначения
+            </a>
+        </div>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-users-slash" style="font-size: 64px; color: #e8c9b0;"></i>
+        <h3>Нет проектов для назначения экспертов</h3>
+        <p>Возможные причины:</p>
+        <ul class="empty-reasons">
+            <li>Нет одобренных заявок в этом конкурсе</li>
+            <li>Нет зарегистрированных экспертов</li>
+            <li>Эксперты уже назначены на все проекты</li>
+        </ul>
+        <div class="empty-actions">
+            <a href="/admin/dashboard?contest_id={{ request.args.get('contest_id', '') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Вернуться к панели
+            </a>
+            <a href="/admin/experts/add" class="btn btn-primary">
+                <i class="fas fa-user-plus"></i> Добавить эксперта
+            </a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.breadcrumbs {
+    margin-bottom: 24px;
+    padding: 12px 0;
+    color: #64748b;
+}
+.breadcrumbs a {
+    color: #7c9bc0;
+    text-decoration: none;
+}
+.assignment-card {
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+    border: 1px solid #e2e8f0;
+}
+.assignment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+.assignment-header h3 {
+    margin: 0;
+}
+.direction-badge {
+    background: #e2e8f0;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+.experts-list ul {
+    margin-top: 8px;
+    margin-left: 20px;
+}
+.experts-list li {
+    padding: 4px 0;
+    color: #2c3e50;
+}
+.experts-list i {
+    color: #a8c9a8;
+    margin-right: 8px;
+}
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    background: white;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+}
+.empty-state h3 {
+    margin: 20px 0 10px;
+}
+.empty-state p {
+    color: #64748b;
+    margin-bottom: 16px;
+}
+.empty-reasons {
+    list-style: none;
+    display: inline-block;
+    text-align: left;
+    margin: 16px auto;
+    padding: 0;
+}
+.empty-reasons li {
+    padding: 6px 0;
+    color: #64748b;
+}
+.empty-reasons li:before {
+    content: "•";
+    color: #e8c9b0;
+    font-weight: bold;
+    display: inline-block;
+    width: 20px;
+}
+.empty-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 24px;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Вход в систему{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-box">
+        <h2>Вход в систему</h2>
+        <p class="auth-subtitle">Гранты России — официальная платформа грантовой поддержки</p>
+
+        {% if error %}
+        <div class="alert alert-error">
+            <span class="alert-icon">⚠️</span>
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <form method="POST">
+            <div class="form-group">
+                <label>Логин</label>
+                <input type="text" name="username" placeholder="Введите ваш логин" required>
+            </div>
+
+            <div class="form-group">
+                <label>Пароль</label>
+                <input type="password" name="password" placeholder="Введите пароль" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">Войти</button>
+        </form>
+
+        <div class="auth-links">
+            <p>Нет аккаунта? <a href="/register">Зарегистрироваться</a></p>
+        </div>
+
+        <div class="auth-test-data">
+            <p>Тестовые данные:</p>
+            <ul>
+                <li><strong>Организатор:</strong> admin / admin123</li>
+                <li><strong>Заявитель:</strong> зарегистрируйтесь сами</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

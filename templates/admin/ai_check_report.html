@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style.css">
+    <title>Отчет AI проверки заявок</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f0f2f5;
+            color: #1a1a2e;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto 0 auto;
+            padding: 0 20px;
+        }
+
+        .score-badge {
+            background: #7c9bc0;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <h1>AI-проверка</h1>
+        <a href="/admin/dashboard" style="color: white;">← Назад</a>
+    </header>
+
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">{{ total }}</div>
+                <div class="stat-label">Всего проверено</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">
+                    {{ results|selectattr('new_status', 'equalto', 'Одобрено')|list|length }}
+                </div>
+                <div class="stat-label">Одобрено автоматически</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">
+                    {{ results|selectattr('new_status', 'equalto', 'Отклонено')|list|length }}
+                </div>
+                <div class="stat-label">Отклонено</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">
+                    {{ results|selectattr('new_status', 'equalto', 'На рассмотрении')|list|length }}
+                </div>
+                <div class="stat-label">Требуют ручной проверки</div>
+            </div>
+        </div>
+
+        <!-- кнопки -->
+        <div style="display: flex; gap: 15px; justify-content: flex-end; margin-bottom: 20px; flex-wrap: wrap;">
+            <a href="/admin/export_report/excel" class="btn-pastel btn-excel-pastel">Скачать отчет Excel</a>
+            <a href="/admin/export_report/pdf" class="btn-pastel btn-pdf-pastel">Скачать отчет PDF</a>
+            <a href="/admin/export_winners" class="btn-pastel btn-winners-pastel">Скачать победителей Excel</a>
+        </div>
+
+        <div class="applications-list">
+            {% for app in results %}
+            <div class="application-card">
+                <div class="card-header">
+                    <div>
+                        <span class="app-title">{{ app.project_name }}</span>
+                        <span class="app-id">ID: {{ app.id }}</span>
+                        <div class="status-change">Статус изменен с "{{ app.old_status }}" на новый</div>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <span class="score-badge">Балл: {{ app.score }}</span>
+                        <span class="status-badge
+                            {% if app.new_status == 'Одобрено' %}status-approved
+                            {% elif app.new_status == 'Отклонено' %}status-rejected
+                            {% else %}status-review{% endif %}">
+                            {{ app.new_status }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <div class="score-section">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <span>Общий балл качества</span>
+                            <span><strong>{{ app.score }}%</strong></span>
+                        </div>
+                        <div class="score-bar">
+                            <div class="score-bar-fill" style="width: {{ app.score }}%"></div>
+                        </div>
+                    </div>
+
+                    <div class="stats-row">
+                        <div class="stat-item">
+                            <div class="stat-value">{{ app.summary.valid_fields }}</div>
+                            <div class="stat-label-small">Заполнено корректно</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">{{ app.summary.warning_fields }}</div>
+                            <div class="stat-label-small">Требуют внимания</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">{{ app.summary.error_fields }}</div>
+                            <div class="stat-label-small">Содержат ошибки</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">{{ app.summary.total_fields }}</div>
+                            <div class="stat-label-small">Всего полей</div>
+                        </div>
+                    </div>
+
+                    {% if app.recommendations %}
+                    <div class="recommendations">
+                        <div class="recommendations-title">Рекомендации по доработке</div>
+                        <ul class="recommendations-list">
+                            {% for rec in app.recommendations %}
+                            <li>{{ rec }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    <div style="text-align: right;">
+                        <a href="/admin/application/{{ app.id }}" style="color: #1e3c72; text-decoration: none; font-size: 14px;">Подробнее →</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div style="text-align: center;">
+            <a href="/admin/dashboard" class="btn btn-primary">Вернуться в панель управления</a>
+        </div>
+    </div>
+</body>
+</html>

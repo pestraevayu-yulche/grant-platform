@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Личный кабинет - Шаг Вперёд{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="profile-header">
+        <div class="profile-avatar">
+            <i class="fas fa-user-circle"></i>
+        </div>
+        <div class="profile-info">
+            <h2>{{ user.full_name }}</h2>
+            <p><i class="fas fa-envelope"></i> {{ user.email }}</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h2>Мои заявки</h2>
+            <a href="/" class="btn btn-success">+ Подать новую заявку</a>
+        </div>
+
+        {% if applications %}
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Название проекта</th>
+                        <th>Конкурс</th>
+                        <th>Запрашиваемая сумма</th>
+                        <th>Статус</th>
+                        <th>Дата подачи</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for app in applications %}
+                    <tr>
+                        <td>{{ app.project_name }}</td>
+                        <td>
+    {% if app.contest_name %}
+        {{ app.contest_name }}
+    {% else %}
+        {% if app.contest_id == 1 %}Общий конкурс
+        {% elif app.contest_id == 2 %}Конкурс студенческих грантов России
+        {% elif app.contest_id == 3 %}Конкурс социальных и культурных проектов
+        {% else %}Конкурс не указан{% endif %}
+    {% endif %}
+</td>
+                        <td>{{ "{:,.0f}".format(app.amount) }} ₽</td>
+                        <td>
+                            <span class="status-badge
+                                {% if app.status == 'На рассмотрении' %}status-review
+                                {% elif app.status == 'Одобрено' %}status-approved
+                                {% else %}status-rejected{% endif %}">
+                                {{ app.status }}
+                            </span>
+                         </td>
+                        <td>{{ app.created_at.strftime('%d.%m.%Y') if app.created_at else '' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center" style="padding: 40px 20px;">
+            <p style="color: #6c757d; margin-bottom: 20px;">У вас пока нет поданных заявок</p>
+            <a href="/" class="btn btn-success">Подать первую заявку</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

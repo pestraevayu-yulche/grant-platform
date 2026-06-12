@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Назначение экспертов</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; background: #f0f2f5; }
+        .header { background: #1e3c72; color: white; padding: 20px; margin-bottom: 30px; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 0 20px; }
+        .stats { background: white; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .stats h2 { color: #1e3c72; margin-bottom: 15px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 15px; }
+        .stat-card { text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px; }
+        .stat-number { font-size: 32px; font-weight: bold; color: #1e3c72; }
+        .assignment-list { background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .assignment-item { padding: 15px 20px; border-bottom: 1px solid #e9ecef; }
+        .assignment-item:last-child { border-bottom: none; }
+        .project-name { font-weight: 600; font-size: 16px; color: #1a1a2e; }
+        .expert-name { color: #28a745; margin-top: 5px; font-size: 14px; }
+        .score-badge { background: #1e3c72; color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px; margin-left: 10px; }
+        .btn-back { display: inline-block; margin-top: 20px; padding: 10px 20px; background: #6c757d; color: white; text-decoration: none; border-radius: 5px; }
+        .btn-back:hover { background: #5a6268; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Назначение экспертов</h1>
+    </div>
+    <div class="container">
+        <div class="stats">
+            <h2>Результат автоматического назначения</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">{{ total_apps }}</div>
+                    <div>Заявок обработано</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ assignments|length }}</div>
+                    <div>Назначений создано</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ (assignments|length / total_apps)|round(1) if total_apps > 0 else 0 }}</div>
+                    <div>Экспертов на заявку</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="assignment-list">
+            <div style="background: #e9ecef; padding: 12px 20px; font-weight: 600;">
+                Назначения
+            </div>
+            {% for assign in assignments %}
+            <div class="assignment-item">
+                <div>
+                    <span class="project-name">{{ assign.project_name }}</span>
+                    <span class="score-badge">Совместимость: {{ assign.score }}%</span>
+                </div>
+                <div class="expert-name">
+                    Эксперт: {{ assign.expert_name }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <a href="/admin/dashboard" class="btn-back">Вернуться в панель</a>
+    </div>
+</body>
+</html>

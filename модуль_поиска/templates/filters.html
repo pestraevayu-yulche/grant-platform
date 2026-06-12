@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Настройка поиска проектов</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f5f7fa;
+            color: #1a1a2e;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e9ecef;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #6c757d;
+            font-size: 14px;
+            margin-bottom: 32px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .filter-group {
+            margin-bottom: 28px;
+        }
+
+        .filter-group h3 {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+
+        .range-input {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .range-input input {
+            flex: 1;
+            padding: 10px 14px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox-item input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .checkbox-item label {
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .source-category {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .source-category h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #2c3e50;
+        }
+
+        .source-badge {
+            display: inline-block;
+            background: #e9ecef;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            margin-left: 8px;
+            color: #6c757d;
+        }
+
+        .topics-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .topic-tag {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 20px;
+            padding: 6px 14px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .topic-tag.selected {
+            background: #2c3e50;
+            color: white;
+            border-color: #2c3e50;
+        }
+
+        .btn {
+            background: #2c3e50;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            font-size: 15px;
+            font-weight: 500;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.2s;
+            width: 100%;
+            margin-top: 24px;
+        }
+
+        .btn:hover {
+            background: #1a252f;
+        }
+
+        hr {
+            margin: 24px 0;
+            border: none;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .nav-links {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .nav-link {
+            color: #6c757d;
+            text-decoration: none;
+            font-size: 13px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>Настройка поиска проектов</h1>
+            <div class="subtitle">Уточните параметры для автоматического поиска</div>
+
+            <div id="competitionPreview"
+                style="background: #f8f9fa; border-radius: 12px; padding: 16px; margin-bottom: 24px;"></div>
+
+            <div class="filter-group">
+                <h3>Релевантность</h3>
+                <div class="range-input">
+                    <input type="number" id="minRelevance" value="40" min="0" max="100" step="5">
+                    <span>% и выше</span>
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <h3>Регион</h3>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="filterByRegion">
+                        <label for="filterByRegion">Ограничить поиск по региону</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <h3>Тематика</h3>
+                <div id="topicsContainer" class="topics-list"></div>
+                <div class="checkbox-item" style="margin-top: 12px;">
+                    <input type="checkbox" id="allTopics" checked>
+                    <label for="allTopics">Искать по всем темам</label>
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="filter-group">
+                <h3>Источники данных</h3>
+
+                <div class="source-category">
+                    <h4>Внутренние источники <span class="source-badge">в контуре платформы</span></h4>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="sourceInternal" checked>
+                            <label for="sourceInternal">Проекты заказчика (CRM / база конкурсов)</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="sourcePt2035">
+                            <label for="sourcePt2035">pt.2035.university</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="source-category">
+                    <h4>Внешние источники <span class="source-badge">парсинг / API</span></h4>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="sourceArxiv" checked>
+                            <label for="sourceArxiv">arXiv.org (научные препринты)</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="sourceOpenAlex" checked>
+                            <label for="sourceOpenAlex">OpenAlex (глобальный каталог)</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="sourceRospatent">
+                            <label for="sourceRospatent">Роспатент (патенты РФ)</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button id="searchBtn" class="btn">Запустить поиск</button>
+
+            <div class="nav-links">
+                <a href="/select_competition" class="nav-link">← Выбрать другой конкурс</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let competition = null;
+        let topicsList = [];
+
+        async function loadCompetition() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const competitionId = urlParams.get('competition_id');
+
+            if (!competitionId) {
+                window.location.href = '/';
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/competitions/${competitionId}`);
+                competition = await response.json();
+
+                if (!competition) {
+                    window.location.href = '/';
+                    return;
+                }
+
+                const preview = document.getElementById('competitionPreview');
+                preview.innerHTML = `
+                    <strong>Конкурс:</strong> ${escapeHtml(competition.title)}<br>
+                    <strong>Тематика:</strong> ${escapeHtml(competition.topic)}<br>
+                    ${competition.region ? `<strong>Регион:</strong> ${escapeHtml(competition.region)}` : ''}
+                `;
+
+                if (competition.topic) {
+                    topicsList = competition.topic.split(/[,，、]/).map(t => t.trim()).filter(t => t);
+
+                    const container = document.getElementById('topicsContainer');
+                    container.innerHTML = topicsList.map(topic => `
+                        <div class="topic-tag selected" data-topic="${escapeHtml(topic)}">${escapeHtml(topic)}</div>
+                    `).join('');
+
+                    document.querySelectorAll('.topic-tag').forEach(tag => {
+                        tag.addEventListener('click', () => {
+                            tag.classList.toggle('selected');
+                        });
+                    });
+
+                    document.getElementById('allTopics').addEventListener('change', (e) => {
+                        const isChecked = e.target.checked;
+                        document.querySelectorAll('.topic-tag').forEach(tag => {
+                            if (isChecked) {
+                                tag.classList.add('selected');
+                            } else {
+                                tag.classList.remove('selected');
+                            }
+                        });
+                    });
+                }
+
+                if (competition.region) {
+                    document.getElementById('filterByRegion').checked = true;
+                }
+
+            } catch (error) {
+                console.error('Ошибка загрузки конкурса:', error);
+                window.location.href = '/';
+            }
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function (m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        function getSelectedTopics() {
+            if (document.getElementById('allTopics').checked) {
+                return topicsList;
+            }
+            const selected = [];
+            document.querySelectorAll('.topic-tag.selected').forEach(tag => {
+                selected.push(tag.dataset.topic);
+            });
+            return selected;
+        }
+
+        document.getElementById('searchBtn').addEventListener('click', async () => {
+
+                const filters = {
+                    competition_id: competition.id,
+                    min_relevance: parseInt(document.getElementById('minRelevance').value),
+                    filter_by_region: document.getElementById('filterByRegion').checked,
+                    region: competition.region || null,
+                    topics: getSelectedTopics(),
+                    sources: {
+                        internal: document.getElementById('sourceInternal').checked,
+                        pt2035: document.getElementById('sourcePt2035').checked,
+                        arxiv: document.getElementById('sourceArxiv').checked,
+                        openalex: document.getElementById('sourceOpenAlex').checked,
+                        rospatent: document.getElementById('sourceRospatent').checked
+                    }
+                };
+
+                const payload = {
+                    query: competition.topic,
+                    filters: filters,
+                    top_k: 50
+                };
+
+                try {
+
+                    const response = await fetch('/api/search', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Ошибка поиска');
+                    }
+
+                    const results = await response.json();
+
+                    sessionStorage.setItem(
+                        'searchResults',
+                        JSON.stringify(results)
+                    );
+
+                    window.location.href = '/results';
+
+                } catch (error) {
+
+                    console.error(error);
+                    alert('Ошибка при выполнении поиска');
+
+                }
+            });
+
+        loadCompetition();
+    </script>
+</body>
+
+</html>ы

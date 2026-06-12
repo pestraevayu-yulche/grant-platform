@@ -1,0 +1,34 @@
+[
+    {
+        "id": "manual_001",
+        "title": "Создание интегрируемой интеллектуальной системы на основе анализа данных для поиска проектов и автоматизации процессов грантовых конкурсов",
+        "authors": ["Кильсенбаева Регина"],
+        "affiliations": ["УГНТУ"],
+        "abstract": "Разработка интегрируемой интеллектуальной системы для автоматизации грантовых конкурсов. Система включает модуль поиска проектов (Scouting API) на основе NLP для семантического поиска проектов в открытых источниках (arXiv, eLibrary, Роспатент) и модуль автоматизации проверки заявок и формирования отчетности (Screening API). Технологическая уникальность заключается в применении специализированных русскоязычных NLP-моделей (ruBERT) для глубокого анализа текстов и векторного поиска релевантных разработок.",
+        "source": "pt.2035.university",
+        "url": "https://pt.2035.university/project/razrabotka-integriruemoj-intellektualnoj-sistemy-na-osnove-analiza-dannyh-dla-poiska-proektov-i-avtomatizacii-processov-grantovyh-konkursov",
+        "contacts": [
+            {
+                "name": "Кильсенбаева Регина",
+                "email": "reginakilsenbaeva66@gmail.com",
+                "organization": "УГНТУ"
+            }
+        ]
+    },
+    {
+        "id": "manual_002",
+        "title": "Цифровая платформа для выявления профессиональных дефицитов и развития карьеры",
+        "authors": ["Кильсенбаева Регина"],
+        "affiliations": ["УГНТУ"],
+        "abstract": "Цифровая платформа для развития карьеры, в которой ИИ помогает выявить профессиональные дефициты и рекомендует образовательные программы для подготовки к новым ролям в компании. Платформа использует методы машинного обучения для анализа компетенций сотрудников и построения индивидуальных траекторий развития.",
+        "source": "pt.2035.university",
+        "url": "https://pt.2035.university/project/cifrovaa-platforma-dla-razvitia-karery-v-kotoroj-ii-pomogaet-vyavit-professionalnye-deficity-i-rekomenduet-obrazovatelnye-programmy-dla-podgotovki-k-novym-rolam-v-kompanii",
+        "contacts": [
+            {
+                "name": "Кильсенбаева Регина",
+                "email": "reginakilsenbaeva66@gmail.com",
+                "organization": "УГНТУ"
+            }
+        ]
+    }
+]

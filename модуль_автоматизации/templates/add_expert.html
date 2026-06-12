@@ -1,0 +1,255 @@
+{% extends "base.html" %}
+
+{% block title %}Добавление эксперта - ВКонкурсе{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="breadcrumbs">
+        <a href="/admin/dashboard?contest_id={{ request.args.get('contest_id', '') }}">← Назад к панели</a>
+        <span>/</span>
+        <span>Добавление эксперта</span>
+    </div>
+<div class="container-small">
+    <div class="card">
+        <div class="card-header">
+            <h2>Добавление эксперта</h2>
+            <span class="status-badge status-review">Новый эксперт</span>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data">
+            <!-- Основная информация -->
+            <div class="form-section">
+                <h3>Основная информация</h3>
+                
+                <div class="form-group">
+                    <label>ФИО <span class="required">*</span></label>
+                    <input type="text" name="full_name" required placeholder="Иванов Иван Иванович">
+                </div>
+
+                <div class="form-group">
+                    <label>Email <span class="required">*</span></label>
+                    <input type="email" name="email" required placeholder="expert@example.com">
+                </div>
+
+                <div class="form-group">
+                    <label>Пароль (для входа)</label>
+                    <input type="password" name="password" placeholder="Оставьте пустым для автоматической генерации">
+                    <div class="form-hint">Эксперт сможет войти по email и этому паролю</div>
+                </div>
+            </div>
+
+            <!-- Профессиональная информация -->
+            <div class="form-section">
+                <h3>Профессиональная информация</h3>
+
+                <div class="form-group">
+                    <label>Должность / Специализация</label>
+                    <input type="text" name="position" placeholder="Профессор, руководитель отдела и т.д.">
+                </div>
+
+                <div class="form-group">
+                    <label>Организация / Место работы</label>
+                    <input type="text" name="organization" placeholder="Название организации">
+                </div>
+
+                <div class="form-group">
+                    <label>Опыт работы (лет)</label>
+                    <input type="number" name="experience_years" min="0" placeholder="5">
+                </div>
+
+                <div class="form-group">
+                    <label>Телефон</label>
+                    <input type="tel" name="phone" placeholder="+7 (XXX) XXX-XX-XX">
+                </div>
+            </div>
+
+            <!-- Области компетенции -->
+            <div class="form-section">
+                <h3>Области компетенции</h3>
+                <p class="form-hint">Выберите направления, в которых эксперт разбирается (можно несколько)</p>
+                
+                <div class="competence-grid">
+                    <label class="competence-checkbox">
+                        <input type="checkbox" name="expertise_areas" value="Цифровые технологии">
+                        <span>Цифровые технологии</span>
+                    </label>
+                    <label class="competence-checkbox">
+                        <input type="checkbox" name="expertise_areas" value="Медицина">
+                        <span>Медицина</span>
+                    </label>
+                    <label class="competence-checkbox">
+                        <input type="checkbox" name="expertise_areas" value="Биотехнологии">
+                        <span>Биотехнологии</span>
+                    </label>
+                    <label class="competence-checkbox">
+                        <input type="checkbox" name="expertise_areas" value="Ресурсосберегающая техника">
+                        <span>Ресурсосберегающая техника</span>
+                    </label>
+                    <label class="competence-checkbox">
+                        <input type="checkbox" name="expertise_areas" value="Новые материалы и химические технологии">
+                        <span>Новые материалы</span>
+                    </label>
+                    <label class="competence-checkbox">
+                        <input type="checkbox" name="expertise_areas" value="Новые приборы и интеллектуальные производственные технологии">
+                        <span>Новые приборы</span>
+                    </label>
+                    <label class="competence-checkbox">
+                        <input type="checkbox" name="expertise_areas" value="Креативные индустрии">
+                        <span>Креативные индустрии</span>
+                    </label>
+                    <label class="competence-checkbox">
+                        <input type="checkbox" name="expertise_areas" value="Социальная поддержка">
+                        <span>Социальная поддержка</span>
+                    </label>
+                    <label class="competence-checkbox">
+                        <input type="checkbox" name="expertise_areas" value="Культура и искусство">
+                        <span>Культура и искусство</span>
+                    </label>
+                    <label class="competence-checkbox">
+                        <input type="checkbox" name="expertise_areas" value="Экология">
+                        <span>Экология</span>
+                    </label>
+                    <label class="competence-checkbox">
+                        <input type="checkbox" name="expertise_areas" value="Здоровье">
+                        <span>Здоровье</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Образование и достижения -->
+            <div class="form-section">
+                <h3>Образование и достижения</h3>
+
+                <div class="form-group">
+                    <label>Образование</label>
+                    <textarea name="education" rows="4" placeholder="Укажите учебные заведения, специальности, годы окончания..."></textarea>
+                    <div class="form-hint">Например: 2010-2015 - МГУ, специальность "Прикладная математика"</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Достижения и награды</label>
+                    <textarea name="achievements" rows="3" placeholder="Укажите научные награды, премии, звания..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Научные публикации</label>
+                    <textarea name="publications" rows="3" placeholder="Укажите ключевые публикации..."></textarea>
+                </div>
+            </div>
+
+            <!-- Статус и нагрузка -->
+            <div class="form-section">
+                <h3>Статус и нагрузка</h3>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Максимальная нагрузка (заявок)</label>
+                        <input type="number" name="max_load" value="5" min="1" max="10">
+                    </div>
+                    <div class="form-group">
+                        <label>Рейтинг (1-5)</label>
+                        <input type="number" name="rating" step="0.1" value="5.0" min="1" max="5">
+                    </div>
+                </div>
+
+                <div class="checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="is_available" checked>
+                        <span>Эксперт доступен для назначений</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Кнопки -->
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-large">Сохранить эксперта</button>
+                <a href="/admin/experts" class="btn btn-outline">Отмена</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+.form-section {
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.form-section h3 {
+    font-size: 18px;
+    margin-bottom: 20px;
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.competence-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.competence-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    padding: 8px 12px;
+    background: #f8fafc;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.competence-checkbox:hover {
+    background: #e2e8f0;
+}
+
+.competence-checkbox input {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+}
+
+.competence-checkbox span {
+    font-size: 14px;
+    color: #2c3e50;
+}
+
+.checkbox-group {
+    margin: 15px 0;
+    padding: 10px 0;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+}
+
+.checkbox-label input {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+}
+
+.form-hint {
+    font-size: 12px;
+    color: #64748b;
+    margin-top: 4px;
+}
+
+.required {
+    color: #d4a5a5;
+    margin-left: 4px;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 24px;
+    padding-top: 16px;
+}
+</style>
+{% endblock %}

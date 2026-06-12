@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block title %}Подача заявки - {{ contest.name }}{% endblock %}
+
+{% block content %}
+<div class="container-small">
+    <div class="card">
+        <div class="card-header">
+            <h2>{{ contest.name }}</h2>
+            <span class="status-badge status-review">Шаг Вперёд</span>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data" onsubmit="return validateForm(event)">
+            <div class="form-section">
+                <h3>Информация о заявителе</h3>
+
+                <div class="form-group">
+                    <label>ФИО полностью <span class="required">*</span></label>
+                    <input type="text" name="full_name" required placeholder="Иванов Иван Иванович">
+                </div>
+
+                <div class="form-group">
+                    <label>Email <span class="required">*</span></label>
+                    <input type="email" name="email" required placeholder="ivanov@example.com">
+                </div>
+
+                <div class="form-group">
+                    <label>Организация</label>
+                    <input type="text" name="organization" placeholder="Название организации (если есть)">
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Информация о проекте</h3>
+
+                <div class="form-group">
+                    <label>Название проекта <span class="required">*</span></label>
+                    <input type="text" name="project_name" required placeholder="Название вашего проекта">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Запрашиваемая сумма <span class="required">*</span></label>
+                        <input type="number" name="amount" required placeholder="0 ₽" step="1000">
+                    </div>
+                    <div class="form-group">
+                        <label>Срок реализации (месяцев)</label>
+                        <input type="number" name="duration" value="12">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Направление <span class="required">*</span></label>
+                    <select name="direction" required>
+                        <option value="">Выберите направление</option>
+                        {% for dir in contest.directions %}
+                        <option value="{{ dir }}">{{ dir }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Краткое описание <span class="required">*</span></label>
+                    <textarea name="summary" required placeholder="Опишите суть проекта в 2-3 предложениях" rows="3"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Проблема, которую решает проект <span class="required">*</span></label>
+                    <textarea name="problem" required placeholder="Какая существует проблема?" rows="4"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Ожидаемые результаты</label>
+                    <textarea name="results" placeholder="Какие результаты планируется достичь?" rows="3"></textarea>
+                </div>
+            </div>
+
+            <!-- Согласие на обработку данных -->
+            <div class="form-section">
+                <h3>Согласие на обработку персональных данных</h3>
+                <div class="checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="consent" required>
+                        <span class="checkbox-text">
+                            Я даю согласие на обработку моих персональных данных в соответствии с
+                            <a href="#" target="_blank">Политикой обработки персональных данных</a>
+                        </span>
+                    </label>
+                </div>
+                <small class="form-hint">Согласие требуется для участия в грантовом конкурсе</small>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-large">Подать заявку</button>
+                <a href="/" class="btn btn-outline">Отмена</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+.checkbox-group {
+    margin: 15px 0;
+    padding: 10px;
+    background: #f8fafc;
+    border-radius: 8px;
+}
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+}
+.checkbox-label input {
+    width: 20px;
+    height: 20px;
+    margin: 0;
+}
+.checkbox-text {
+    font-size: 14px;
+    color: #2c3e50;
+}
+.checkbox-text a {
+    color: #7c9bc0;
+    text-decoration: none;
+}
+.checkbox-text a:hover {
+    text-decoration: underline;
+}
+</style>
+
+<script>
+    function validateForm(event) {
+        let errors = [];
+
+        const fullName = document.querySelector('input[name="full_name"]')?.value.trim();
+        const email = document.querySelector('input[name="email"]')?.value.trim();
+        const projectName = document.querySelector('input[name="project_name"]')?.value.trim();
+        const amount = document.querySelector('input[name="amount"]')?.value.trim();
+        const direction = document.querySelector('select[name="direction"]')?.value;
+        const summary = document.querySelector('textarea[name="summary"]')?.value.trim();
+        const problem = document.querySelector('textarea[name="problem"]')?.value.trim();
+        const consent = document.querySelector('input[name="consent"]')?.checked;
+
+        if (!fullName) errors.push("ФИО обязательно для заполнения");
+        if (!email) errors.push("Email обязателен для заполнения");
+        if (!projectName) errors.push("Название проекта обязательно");
+        if (!amount) errors.push("Запрашиваемая сумма обязательна");
+        if (amount && (isNaN(amount) || Number(amount) <= 0)) errors.push("Сумма должна быть положительным числом");
+        if (!direction) errors.push("Выберите направление проекта");
+        if (!summary) errors.push("Краткое описание проекта обязательно");
+        if (!problem) errors.push("Описание проблемы обязательно");
+        if (!consent) errors.push("Необходимо дать согласие на обработку персональных данных");
+
+        if (errors.length > 0) {
+            event.preventDefault();
+            alert("Пожалуйста, исправьте следующие ошибки:\n- " + errors.join("\n- "));
+            return false;
+        }
+        return true;
+    }
+</script>
+{% endblock %}

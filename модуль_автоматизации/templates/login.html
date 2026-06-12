@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Вход - Шаг Вперёд{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-box">
+        <h2>Вход в систему</h2>
+        {% if error %}
+        <div class="alert alert-error">{{ error }}</div>
+        {% endif %}
+        <form method="POST">
+            <input type="text" name="username" placeholder="Логин" required>
+            <input type="password" name="password" placeholder="Пароль" required>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Войти</button>
+        </form>
+        <div class="auth-links">
+            <a href="/register">Зарегистрироваться</a><br>
+            <a href="/">На главную</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

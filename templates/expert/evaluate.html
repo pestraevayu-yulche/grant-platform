@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Оценка проекта{% endblock %}
+
+{% block content %}
+<div class="container-small">
+    <div class="card">
+        <div class="card-header">
+            <h2>Оценка проекта</h2>
+            <a href="/expert/dashboard" class="btn btn-outline">← Назад</a>
+        </div>
+
+        <div class="project-info" style="margin-bottom: 24px; padding: 16px; background: #f8f9fa; border-radius: 12px;">
+            <h3>{{ project.project_name }}</h3>
+            <p><strong>Заявитель:</strong> {{ project.applicant_name }}</p>
+            <p><strong>Конкурс:</strong> {{ project.contest or 'Не указан' }}</p>
+            <p><strong>Направление:</strong> {{ project.direction or 'Не указано' }}</p>
+            <p><strong>Запрашиваемая сумма:</strong> {{ "{:,.0f}".format(project.amount) }} ₽</p>
+            <p><strong>Команда:</strong> {{ project.team_size or 1 }} человек</p>
+        </div>
+
+        <div class="project-description" style="margin-bottom: 24px; padding: 16px; background: #f8f9fa; border-radius: 12px;">
+            <h4>Описание проекта</h4>
+            <p><strong>Краткое описание:</strong> {{ project.summary or 'Не указано' }}</p>
+            <p><strong>Проблема:</strong> {{ project.problem or 'Не указано' }}</p>
+            <p><strong>Уникальность:</strong> {{ project.uniqueness or 'Не указано' }}</p>
+            <p><strong>План реализации:</strong> {{ project.plan or 'Не указано' }}</p>
+            <p><strong>Ожидаемые результаты:</strong> {{ project.results or 'Не указано' }}</p>
+        </div>
+
+        <form method="POST">
+            <h3>Критерии оценки (0-10 баллов)</h3>
+
+            {% set criteria = [
+                {'name': 'Актуальность', 'desc': 'Важность и своевременность проекта для общества'},
+                {'name': 'Новизна', 'desc': 'Оригинальность и инновационность решения'},
+                {'name': 'Реализуемость', 'desc': 'Достижимость поставленных целей'},
+                {'name': 'Команда', 'desc': 'Квалификация и опыт исполнителей'},
+                {'name': 'Бюджет', 'desc': 'Обоснованность и эффективность бюджета'}
+            ] %}
+
+            {% for criterion in criteria %}
+            <div class="criteria-card" style="margin-bottom: 20px; padding: 16px; background: #f8f9fa; border-radius: 12px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                    <div>
+                        <h4>{{ criterion.name }}</h4>
+                        <p style="font-size: 13px; color: #6c757d;">{{ criterion.desc }}</p>
+                    </div>
+                    <div>
+                        <input type="number"
+                               name="score_{{ criterion.name }}"
+                               value="{{ saved_scores[criterion.name]['score'] if criterion.name in saved_scores else '' }}"
+                               min="0" max="10" step="1" required
+                               style="width: 80px; padding: 8px; text-align: center; font-size: 16px;">
+                        <span>из 10</span>
+                    </div>
+                </div>
+                <div style="margin-top: 12px;">
+                    <label style="font-size: 13px;">Комментарий (необязательно)</label>
+                    <textarea name="comment_{{ criterion.name }}" rows="2"
+                              style="width: 100%; margin-top: 4px;">{{ saved_scores[criterion.name]['comment'] if criterion.name in saved_scores else '' }}</textarea>
+                </div>
+            </div>
+            {% endfor %}
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-large">Сохранить оценки</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .criteria-card:hover {
+        background: #e8f5e9 !important;
+        transition: 0.2s;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="2b293f9a-a504-40e0-ae1f-cb17348464e1" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/grant_platform.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/style.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/admin/add_expert.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/admin/admin_application_detail.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/admin/ai_check_report.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/admin/ai_dashboard.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/admin/anomalies_report.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/admin/application_detail.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/admin/assign_experts.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/admin/auto_assign_result.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/admin/dashboard.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/admin/experts_list.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/admin/project_final_report.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/apply.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/auth/login.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/auth/register.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/base.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/expert/assign_experts_batch.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/expert/assign_experts_result.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/expert/dashboard.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/expert/evaluate.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/expert/experts_list.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/expert/login.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/profile.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/модуль_автоматизации/fix_automation_contests.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/модуль_автоматизации/templates/admin_contest_form.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/модуль_поиска/automation_integration.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/модуль_поиска/check_search_integration.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/модуль_поиска/fix_search_filters_page.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/модуль_поиска/fix_search_module.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 6
+}</component>
+  <component name="ProjectId" id="3DNsfTF2SHrW8IgCofs14JDcQHj" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "master",
+    "last_opened_file_path": "D:/grant_platform"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\grant_platform\модуль_поиска" />
+      <recent name="D:\grant_platform\модуль_автоматизации" />
+      <recent name="D:\grant_platform\модуль_автоматизации\templates" />
+      <recent name="D:\grant_platform\templates\admin" />
+      <recent name="D:\grant_platform\templates\expert" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\grant_platform\templates" />
+      <recent name="D:\grant_platform" />
+    </key>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-python-sdk-fb887030ada0-aa17d162503b-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-243.21565.199" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="2b293f9a-a504-40e0-ae1f-cb17348464e1" name="Changes" comment="" />
+      <created>1778133964377</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1778133964377</updated>
+    </task>
+    <servers />
+  </component>
+</project>

@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Заявка #{{ app['id'] }} - Гранты России</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px 24px;
+            margin-top: 16px;
+        }
+
+        .info-row {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .info-label {
+            font-size: 12px;
+            font-weight: 500;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            font-size: 15px;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        .text-field {
+            background: #f8fafc;
+            padding: 16px;
+            border-radius: 8px;
+            margin-top: 8px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #2c3e50;
+            border: 1px solid #e2e8f0;
+        }
+
+        .status-form {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 24px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .status-form h3 {
+            margin-bottom: 16px;
+            font-size: 16px;
+        }
+
+        .status-select {
+            max-width: 250px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 24px;
+            color: #7c9bc0;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .ai-result-card {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .score-large {
+            font-size: 36px;
+            font-weight: 700;
+            color: #7c9bc0;
+        }
+
+        .field-analysis-table {
+            width: 100%;
+            margin-top: 16px;
+        }
+
+        .field-analysis-table td {
+            padding: 10px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .field-status-valid {
+            color: #7c9bc0;
+        }
+
+        .field-status-warning {
+            color: #e8c9b0;
+        }
+
+        .field-status-error {
+            color: #d4a5a5;
+        }
+
+        @media (max-width: 768px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            .full-width {
+                grid-column: span 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <h1>Гранты России</h1>
+        <div class="header-links">
+            <a href="/admin/dashboard">← Назад</a>
+            <a href="/logout">Выход</a>
+        </div>
+    </header>
+
+    <div class="container-small">
+        <div class="card">
+            <div class="card-header">
+                <h2>Заявка №{{ app['id'] }}</h2>
+                <span class="status-badge
+                    {% if app['status'] == 'Рассмотрение' %}status-review
+                    {% elif app['status'] == 'Одобрено' %}status-approved
+                    {% else %}status-rejected{% endif %}">
+                    {{ app['status'] }}
+                </span>
+            </div>
+
+            <!-- Информация об участнике -->
+            <div class="section-title">Информация об участнике</div>
+            <div class="info-grid">
+                <div class="info-row">
+                    <span class="info-label">ФИО</span>
+                    <span class="info-value">{{ app['full_name'] or 'Не указано' }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Адрес проживания</span>
+                    <span class="info-value">{{ app['address'] or 'Не указано' }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Дата рождения</span>
+                    <span class="info-value">{{ app['birth_date'] or 'Не указано' }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Место учебы</span>
+                    <span class="info-value">{{ app['education_place'] or 'Не указано' }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Паспорт</span>
+                    <span class="info-value">{{ app['passport_series'] or '' }} {{ app['passport_number'] or '' }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Кем выдан</span>
+                    <span class="info-value">{{ app['passport_issued_by'] or 'Не указано' }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Дата выдачи</span>
+                    <span class="info-value">{{ app['passport_date'] or 'Не указано' }}</span>
+                </div>
+            </div>
+
+            <!-- Данные о проекте -->
+            <div class="section-title" style="margin-top: 28px;">Данные о проекте</div>
+            <div class="info-grid">
+                <div class="info-row full-width">
+                    <span class="info-label">Название проекта</span>
+                    <span class="info-value">{{ app['project_name'] or 'Не указано' }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Краткое название</span>
+                    <span class="info-value">{{ app['project_short'] or 'Не указано' }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Запрашиваемая сумма</span>
+                    <span class="info-value">{{ "{:,.0f}".format(app['amount']) if app['amount'] else '0' }} ₽</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Направление</span>
+                    <span class="info-value">{{ app['direction'] or 'Не указано' }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Срок реализации</span>
+                    <span class="info-value">{{ app['duration'] or '0' }} мес.</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Команда проекта</span>
+                    <span class="info-value">{{ app['team_size'] or '0' }} чел.</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Наличие прототипа</span>
+                    <span class="info-value">{{ app['prototype'] or 'Нет' }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Дата подачи</span>
+                    <span class="info-value">{{ app['created_at'].strftime('%d.%m.%Y %H:%M') if app['created_at'] else 'Не указано' }}</span>
+                </div>
+            </div>
+
+            <!-- Описание проекта -->
+            <div class="section-title" style="margin-top: 28px;">Описание проекта</div>
+
+            <div class="info-row" style="margin-bottom: 16px;">
+                <span class="info-label">Краткое описание</span>
+                <div class="text-field">{{ app['summary'] or 'Не указано' }}</div>
+            </div>
+
+            <div class="info-row" style="margin-bottom: 16px;">
+                <span class="info-label">Проблематика</span>
+                <div class="text-field">{{ app['problem'] or 'Не указано' }}</div>
+            </div>
+
+            <div class="info-row" style="margin-bottom: 16px;">
+                <span class="info-label">Целевая аудитория</span>
+                <div class="text-field">{{ app['audience'] or 'Не указано' }}</div>
+            </div>
+
+            <div class="info-row" style="margin-bottom: 16px;">
+                <span class="info-label">Уникальность решения</span>
+                <div class="text-field">{{ app['uniqueness'] or 'Не указано' }}</div>
+            </div>
+
+            <div class="info-row" style="margin-bottom: 16px;">
+                <span class="info-label">План реализации</span>
+                <div class="text-field">{{ app['plan'] or 'Не указано' }}</div>
+            </div>
+
+            <div class="info-row">
+                <span class="info-label">Ожидаемые результаты</span>
+                <div class="text-field">{{ app['results'] or 'Не указано' }}</div>
+            </div>
+
+            <div class="section-title" style="margin-top: 28px;">Загруженные документы</div>
+<div class="info-grid" style="margin-bottom: 20px;">
+    <div class="info-row">
+        <span class="info-label">Согласие на обработку персональных данных</span>
+        <div class="info-value">
+            {% if app['consent_file'] %}
+                <a href="/admin/download/{{ app['consent_file'] }}" class="btn btn-sm btn-outline" target="_blank">
+                    Скачать согласие
+                </a>
+            {% else %}
+                <span style="color: #999;">Файл не загружен</span>
+            {% endif %}
+        </div>
+    </div>
+    <div class="info-row">
+        <span class="info-label">Справка с места учебы</span>
+        <div class="info-value">
+            {% if app['education_file'] %}
+                <a href="/admin/download/{{ app['education_file'] }}" class="btn btn-sm btn-outline" target="_blank">
+                    Скачать справку
+                </a>
+            {% else %}
+                <span style="color: #999;">Файл не загружен</span>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+            <!-- Результаты AI проверки -->
+            {% if app.validation_errors %}
+            <div class="section-title" style="margin-top: 28px; display: flex; justify-content: space-between; align-items: center;">
+                <span>Результаты AI проверки</span>
+                <a href="/admin/recheck_application/{{ app['id'] }}"
+                   class="btn btn-sm btn-outline"
+                   onclick="return confirm('Выполнить повторную AI проверку заявки? Текущие данные будут обновлены.')">Повторная AI проверка</a>
+            </div>
+            <div class="ai-result-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 16px;">
+                    <div>
+                        <span class="info-label">Общий балл</span>
+                        <div class="score-large">{{ app['score'] if app['score'] else 0 }}<span style="font-size: 18px;"> / 100</span></div>
+                    </div>
+                    <div>
+                        <span class="status-badge
+                            {% if app['score'] and app['score'] >= 75 %}status-approved
+                            {% elif app['score'] and app['score'] >= 50 %}status-review
+                            {% else %}status-rejected{% endif %}">
+                            {% if app['score'] and app['score'] >= 75 %}Рекомендовано
+                            {% elif app['score'] and app['score'] >= 50 %}Требует доработки
+                            {% else %}Не рекомендовано{% endif %}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="score-bar" style="margin-bottom: 20px;">
+                    <div class="score-bar-fill" style="width: {{ app['score'] if app['score'] else 0 }}%"></div>
+                </div>
+
+                {% set ai_data = app['validation_errors'] %}
+                {% if ai_data is string %}
+                    {% set ai_data = ai_data|tojson|safe %}
+                {% endif %}
+
+                {% if ai_data.fields_analysis %}
+                <table class="field-analysis-table">
+                    {% for field_name, analysis in ai_data.fields_analysis.items() %}
+                    <tr>
+                        <td style="width: 40%;">
+                            {% if field_name == 'passport_data' %}Паспортные данные
+                            {% elif field_name == 'financial' %}Финансовое обоснование
+                            {% elif field_name == 'direction' %}Направление
+                            {% elif field_name == 'team' %}Команда проекта
+                            {% elif field_name == 'summary' %}Краткое описание
+                            {% elif field_name == 'problem' %}Проблематика
+                            {% elif field_name == 'uniqueness' %}Уникальность
+                            {% elif field_name == 'plan' %}План реализации
+                            {% elif field_name == 'results' %}Ожидаемые результаты
+                            {% elif field_name == 'audience' %}Целевая аудитория
+                            {% else %}{{ field_name }}{% endif %}
+                        </td>
+                        <td style="width: 20%; text-align: center;">
+                            <span class="field-status-{{ analysis.status }}">
+                                {% if analysis.status == 'valid' %}Корректно
+                                {% elif analysis.status == 'warning' %}Внимание
+                                {% elif analysis.status == 'error' %}Ошибка
+                                {% else %}{{ analysis.status }}{% endif %}
+                            </span>
+                        </td>
+                        <td style="width: 40%; text-align: right;">
+                            {{ analysis.score }}%
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                {% endif %}
+
+                {% if ai_data.recommendations %}
+                <div class="recommendations" style="margin-top: 16px; margin-bottom: 0;">
+                    <div style="font-weight: 500; margin-bottom: 8px;">Рекомендации</div>
+                    <ul>
+                        {% for rec in ai_data.recommendations[:4] %}
+                        <li>{{ rec }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <!-- Форма изменения статуса -->
+            <div class="status-form">
+                <h3>Изменение статуса заявки</h3>
+                <form method="POST" action="/admin/update_status/{{ app['id'] }}">
+                    <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center;">
+                        <select name="status" id="statusSelect" class="status-select" style="padding: 8px 12px;">
+                            <option value="Рассмотрение">Рассмотрение</option>
+                            <option value="Одобрено">Одобрено</option>
+                            <option value="Отклонено">Отклонено</option>
+                        </select>
+                        <button type="submit" class="btn btn-primary">Сохранить</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="text-center" style="margin-top: 16px;">
+                <a href="/admin/dashboard" class="back-link">← Назад к списку заявок</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Результаты проверки документов -->
+{% if app.document_validation %}
+<div class="section-title" style="margin-top: 28px;">Результаты AI проверки документов</div>
+<div class="ai-result-card">
+    {% set doc_check = app.document_validation|from_json if app.document_validation is string else app.document_validation %}
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <div>
+            <span class="info-label">Статус проверки документов</span>
+            <div class="status-badge {% if doc_check.overall_valid %}status-approved{% else %}status-rejected{% endif %}"
+                 style="margin-top: 8px;">
+                {% if doc_check.overall_valid %}Документы в порядке{% else %}Требуется замена документов{% endif %}
+            </div>
+        </div>
+        <div class="text-right">
+            <div>Ошибок: <strong style="color: #d4a5a5;">{{ doc_check.total_errors }}</strong></div>
+            <div>Предупреждений: <strong style="color: #e8c9b0;">{{ doc_check.total_warnings }}</strong></div>
+        </div>
+    </div>
+
+    <!-- Проверка согласия -->
+    <div style="margin-bottom: 20px;">
+        <h4>Согласие на обработку персональных данных</h4>
+        {% if doc_check.consent.errors %}
+            {% for error in doc_check.consent.errors %}
+                <div class="alert alert-error" style="background: #f0d6d6; padding: 8px; margin: 5px 0; border-radius: 4px;">
+                     {{ error }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        {% if doc_check.consent.warnings %}
+            {% for warning in doc_check.consent.warnings %}
+                <div class="alert" style="background: #fff3cd; padding: 8px; margin: 5px 0; border-radius: 4px;">
+                     {{ warning }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        {% if not doc_check.consent.errors and not doc_check.consent.warnings %}
+            <div class="alert alert-success" style="background: #d4e8d4; padding: 8px; border-radius: 4px;">
+                 Согласие проверено: ФИО и паспортные данные совпадают
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Проверка справки -->
+    <div>
+        <h4>Справка с места учебы</h4>
+        {% if doc_check.education.errors %}
+            {% for error in doc_check.education.errors %}
+                <div class="alert alert-error" style="background: #f0d6d6; padding: 8px; margin: 5px 0; border-radius: 4px;">
+                     {{ error }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        {% if doc_check.education.warnings %}
+            {% for warning in doc_check.education.warnings %}
+                <div class="alert" style="background: #fff3cd; padding: 8px; margin: 5px 0; border-radius: 4px;">
+                     {{ warning }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        {% if not doc_check.education.errors and not doc_check.education.warnings %}
+            <div class="alert alert-success" style="background: #d4e8d4; padding: 8px; border-radius: 4px;">
+                Справка проверена: дата выдачи актуальная, ФИО совпадает
+            </div>
+        {% endif %}
+    </div>
+    </div>
+    {% endif %}
+
+
+    <script>
+        // Устанавливаем выбранное значение на основе статуса из БД
+        document.getElementById('statusSelect').value = '{{ app["status"] }}';
+    </script>
+</body>
+</html>

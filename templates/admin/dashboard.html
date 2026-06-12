@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+
+{% block title %}Панель организатора{% endblock %}
+
+{% block content %}
+
+<div class="admin-search-section">
+    <div class="search-container">
+        <h3>Поиск заявок</h3>
+        <div class="search-filters">
+            <div class="search-group">
+                <label>Поиск по ID</label>
+                <input type="text" id="searchId" placeholder="Введите ID заявки" class="search-input">
+            </div>
+            <div class="search-group">
+                <label>Поиск по названию проекта</label>
+                <input type="text" id="searchProject" placeholder="Введите название проекта" class="search-input">
+            </div>
+            <div class="search-group">
+                <label>Поиск по ФИО заявителя</label>
+                <input type="text" id="searchName" placeholder="Введите ФИО" class="search-input">
+            </div>
+            <div class="search-group">
+                <label>&nbsp;</label>
+                <button id="clearSearch" class="btn btn-outline">Сбросить поиск</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="quick-actions">
+    <a href="/admin/ai_check_all" class="btn btn-primary">AI проверка всех заявок</a>
+    <a href="/admin/assign_experts" class="btn btn-success">Назначить экспертов</a>
+    <a href="/admin/generate_schedule" class="btn btn-outline">График заслушиваний</a>
+    <a href="/admin/experts" class="btn btn-success">Управление экспертами</a>
+    <a href="/admin/anomalies" class="btn btn-warning">Аномалии в оценках</a>
+    <a href="/admin/export_report" class="btn btn-outline">Экспорт отчёта</a>
+</div>
+
+
+<div class="card">
+    <div class="card-header">
+        <h2>Список заявок</h2>
+        <div class="filter-bar">
+            <button class="filter-btn active" data-filter="all">Все</button>
+            <button class="filter-btn" data-filter="review">На рассмотрении</button>
+            <button class="filter-btn" data-filter="approved">Одобрено</button>
+            <button class="filter-btn" data-filter="rejected">Отклонено</button>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="admin-table" id="applicationsTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Проект</th>
+                    <th>Заявитель</th>
+                    <th>Сумма</th>
+                    <th>Дата</th>
+                    <th>Статус</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                {% for app in applications %}
+                <tr class="status-row status-{{ app.status|replace(' ', '-')|lower }}"
+                    data-id="{{ app.id }}"
+                    data-project="{{ app.project_name|lower }}"
+                    data-name="{{ app.full_name|lower }}">
+                    <td>#{{ app.id }}</td>
+                    <td class="project-name">{{ app.project_name|truncate(40) }}</td>
+                    <td>{{ app.full_name }}</td>
+                    <td class="amount">{{ "{:,.0f}".format(app.amount) }} ₽</td>
+                    <td>{{ app.created_at.strftime('%d.%m.%Y') if app.created_at else '-' }}</td>
+                    <td>
+                        <span class="status-badge
+                            {% if app.status == 'Одобрено' %}status-approved
+                            {% elif app.status == 'Отклонено' %}status-rejected
+                            {% else %}status-review{% endif %}">
+                            {{ app.status }}
+                        </span>
+                    </td>
+                    <td>
+                        <a href="/admin/application/{{ app.id }}" class="btn btn-sm btn-primary">Просмотр</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="search-results-info" id="searchResultsInfo"></div>
+</div>
+
+<script>
+    // Получаем элементы поиска
+    const searchId = document.getElementById('searchId');
+    const searchProject = document.getElementById('searchProject');
+    const searchName = document.getElementById('searchName');
+    const clearBtn = document.getElementById('clearSearch');
+    const tableBody = document.getElementById('tableBody');
+    const searchResultsInfo = document.getElementById('searchResultsInfo');
+
+    // Функция для фильтрации таблицы
+    function filterTable() {
+        const idValue = searchId.value.trim();
+        const projectValue = searchProject.value.trim().toLowerCase();
+        const nameValue = searchName.value.trim().toLowerCase();
+
+        const rows = tableBody.querySelectorAll('tr');
+        let visibleCount = 0;
+
+        rows.forEach(row => {
+            const rowId = row.getAttribute('data-id');
+            const rowProject = row.getAttribute('data-project');
+            const rowName = row.getAttribute('data-name');
+
+            let show = true;
+
+            // Фильтр по ID
+            if (idValue) {
+                if (!rowId.includes(idValue)) {
+                    show = false;
+                }
+            }
+
+            // Фильтр по названию проекта
+            if (show && projectValue) {
+                if (!rowProject.includes(projectValue)) {
+                    show = false;
+                }
+            }
+
+            // Фильтр по ФИО
+            if (show && nameValue) {
+                if (!rowName.includes(nameValue)) {
+                    show = false;
+                }
+            }
+
+            if (show) {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        // Показываем информацию о результатах поиска
+        if (idValue || projectValue || nameValue) {
+            const totalRows = rows.length;
+            searchResultsInfo.innerHTML = `<div class="search-info">Найдено заявок: ${visibleCount} из ${totalRows}</div>`;
+        } else {
+            searchResultsInfo.innerHTML = '';
+        }
+    }
+
+    // Функция сброса поиска
+    function clearSearch() {
+        searchId.value = '';
+        searchProject.value = '';
+        searchName.value = '';
+        filterTable();
+    }
+
+    // Добавляем обработчики событий
+    searchId.addEventListener('input', filterTable);
+    searchProject.addEventListener('input', filterTable);
+    searchName.addEventListener('input', filterTable);
+    clearBtn.addEventListener('click', clearSearch);
+
+    // Фильтрация по статусу (как было раньше)
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const filter = this.dataset.filter;
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+
+            const rows = tableBody.querySelectorAll('.status-row');
+            rows.forEach(row => {
+                // Сначала проверяем, видна ли строка по поиску
+                const isSearchVisible = row.style.display !== 'none';
+
+                if (filter === 'all') {
+                    if (isSearchVisible) row.style.display = '';
+                } else {
+                    const statusCell = row.querySelector('.status-badge');
+                    const status = statusCell ? statusCell.textContent.trim() : '';
+                    let show = false;
+                    if (filter === 'review' && status === 'На рассмотрении') show = true;
+                    if (filter === 'approved' && status === 'Одобрено') show = true;
+                    if (filter === 'rejected' && status === 'Отклонено') show = true;
+
+                    row.style.display = (show && isSearchVisible) ? '' : 'none';
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Назначение экспертов</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header class="site-header">
+        <h1>Назначение экспертов</h1>
+        <a href="/admin/dashboard" style="color: white;">← Назад</a>
+    </header>
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h2>Результат назначения</h2>
+                <span class="status-badge status-approved">Обработано: {{ total }}</span>
+            </div>
+
+            {% for assign in assignments %}
+            <div class="project-card" style="margin-bottom: 20px; padding: 16px; background: #f8fafc; border-radius: 8px;">
+                <h3 style="margin-bottom: 8px;">{{ assign.project_name }}</h3>
+                <p style="color: #64748b; font-size: 14px; margin-bottom: 12px;">Направление: {{ assign.direction }}</p>
+                <div style="background: white; padding: 12px; border-radius: 8px;">
+                    <strong>Назначенные эксперты:</strong>
+                    <ul style="margin-top: 8px; margin-left: 20px;">
+                        {% for expert in assign.expert_names %}
+                        <li>{{ expert }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            {% endfor %}
+
+            <div class="text-center mt-20">
+                <a href="/admin/project_experts" class="btn btn-primary">Посмотреть все назначения</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

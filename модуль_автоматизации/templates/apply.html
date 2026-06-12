@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Подача заявки - {{ contest.name }}{% endblock %}
+
+{% block content %}
+<div class="container-small">
+    <div class="card">
+        <div class="card-header">
+            <h2>Подача заявки на конкурс</h2>
+            <div class="contest-info-badge">
+                <strong>{{ contest.name }}</strong>
+                <span class="badge">Макс. сумма: {{ "{:,.0f}".format(contest.max_amount) }} ₽</span>
+            </div>
+        </div>
+
+        <form method="POST" action="/apply/{{ contest.id }}" enctype="multipart/form-data">
+            <input type="hidden" name="contest_id" value="{{ contest.id }}">
+
+            <!-- Здесь весь код формы из текущего index.html -->
+            <!-- (вкладки, поля, файлы - всё как было) -->
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Подать заявку</button>
+                <a href="/" class="btn btn-secondary">Отмена</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

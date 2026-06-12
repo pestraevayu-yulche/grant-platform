@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Главная - Шаг вперед{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="hero-content">
+        <h1>Шаг вперед</h1>
+        <p>Платформа «гранты.рф» — информационный ресурс об оказании финансовой поддержки некоммерческим неправительственным организациям в регионах Российской Федерации</p>
+        <a href="/register" class="btn btn-primary btn-large">Стать участником</a>
+
+        <div class="hero-stats">
+            <div class="stat">
+                <div class="stat-number">50+</div>
+                <div class="stat-label">проектов поддержано</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">100+</div>
+                <div class="stat-label">млн руб. выделено</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h2>Конкурс грантов Главы Республики Башкортостан в сфере молодежной политики</h2>
+            <span class="badge-count">Актуально</span>
+        </div>
+        <div style="padding: 0 24px 24px 24px;">
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">Приём заявок</span>
+                    <span class="info-value">до 30 июня 2026 г.</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Максимальная сумма</span>
+                    <span class="info-value">2 000 000 ₽</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Срок реализации</span>
+                    <span class="info-value">до 36 месяцев</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Регионы</span>
+                    <span class="info-value">Республика Башкортостан</span>
+                </div>
+            </div>
+            <div style="margin-top: 24px; text-align: center;">
+                <a href="/register" class="btn btn-primary">Подать заявку</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h2>Конкурс студенческих грантов России</h2>
+            <span class="badge-count">Актуально</span>
+        </div>
+        <div style="padding: 0 24px 24px 24px;">
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">Приём заявок</span>
+                    <span class="info-value">до 30 июня 2026 г.</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Максимальная сумма</span>
+                    <span class="info-value">1 000 000 ₽</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Срок реализации</span>
+                    <span class="info-value">до 12 месяцев</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Регионы</span>
+                    <span class="info-value">Субъекты РФ</span>
+                </div>
+            </div>
+            <div style="margin-top: 24px; text-align: center;">
+                <a href="/register" class="btn btn-primary">Подать заявку</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

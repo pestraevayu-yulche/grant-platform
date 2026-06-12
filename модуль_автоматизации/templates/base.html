@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ВКонкурсе - Грантовая поддержка{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        main {
+            flex: 1;
+        }
+        .site-footer {
+            margin-top: auto;
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-container">
+            <div class="logo">
+                <a href="/">
+                    <i class="fas fa-arrow-right"></i>
+                    <div>
+                        <h1>ВКонкурсе</h1>
+                        <p class="logo-subtitle">Грантовая поддержка проектов</p>
+                    </div>
+                </a>
+            </div>
+            <nav class="header-nav">
+                <a href="/#contests" class="nav-link">Конкурсы</a>
+                <a href="/#about" class="nav-link">О платформе</a>
+                <a href="/#directions" class="nav-link">Направления</a>
+
+                {% if session.user_id %}
+                    <span class="user-name"><i class="fas fa-user-circle"></i> {{ session.full_name }}</span>
+                    {% if session.role == 'admin' %}
+                        <a href="/admin/dashboard" class="nav-link">Панель организатора</a>
+                    {% elif session.role == 'expert' %}
+                        <a href="/expert/dashboard" class="nav-link">Панель эксперта</a>
+                        <a href="/expert/profile" class="nav-link">Мой профиль</a>
+                    {% else %}
+                        <a href="/profile" class="nav-link">Личный кабинет</a>
+                    {% endif %}
+                    <a href="/logout" class="nav-link">Выход</a>
+                {% else %}
+                    <a href="/login" class="nav-link">Заявителям</a>
+                    <a href="/expert/login" class="nav-link">Экспертам</a>
+                    <a href="/register" class="btn-grant">Регистрация</a>
+                {% endif %}
+            </nav>
+            <div class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-column">
+                <h4><i class="fas fa-arrow-right"></i> ВКонкурсе</h4>
+                <p>Платформа грантовой поддержки социальных, культурных и молодёжных инициатив.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-vk"></i></a>
+                    <a href="#"><i class="fab fa-telegram"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            <div class="footer-column">
+                <h4>Контакты</h4>
+                <p><i class="fas fa-phone"></i> 8-800-123-45-67</p>
+                <p><i class="fas fa-envelope"></i> support@vkongurse.ru</p>
+                <p><i class="fas fa-map-marker-alt"></i> г. Москва, ул. Грантовая, д. 1</p>
+            </div>
+            <div class="footer-column">
+                <h4>Информация</h4>
+                <p>© 2026 Все права защищены</p>
+                <a href="#">Политика конфиденциальности</a>
+                <a href="#">Пользовательское соглашение</a>
+                <a href="#">Партнёрам</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.querySelector('.mobile-menu-btn')?.addEventListener('click', function() {
+            document.querySelector('.header-nav').classList.toggle('active');
+        });
+    </script>
+</body>
+</html>

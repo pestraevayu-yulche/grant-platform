@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Регистрация - Шаг Вперёд{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-box">
+        <h2>Регистрация заявителя</h2>
+        {% if error %}
+        <div class="alert alert-error">{{ error }}</div>
+        {% endif %}
+        <form method="POST">
+            <input type="text" name="full_name" placeholder="ФИО полностью" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="text" name="username" placeholder="Придумайте логин" required>
+            <input type="password" name="password" placeholder="Придумайте пароль" required>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Зарегистрироваться</button>
+        </form>
+        <div class="auth-links">
+            Уже есть аккаунт? <a href="/login">Войти</a><br>
+            <a href="/">На главную</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

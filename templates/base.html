@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Шаг Вперёд - Грантовая поддержка{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-container">
+            <div class="logo">
+                <a href="/">
+                    <h1>Шаг Вперёд</h1>
+                    <p class="logo-subtitle">Грантовая поддержка социальных, культурных и молодёжных проектов</p>
+                </a>
+            </div>
+            <nav class="header-nav">
+                <a href="/#contests" class="nav-link">Конкурсы</a>
+                <a href="/#about" class="nav-link">О платформе</a>
+
+                {% if session.user_id %}
+                    <span class="user-name">{{ session.full_name }}</span>
+                    {% if session.role == 'admin' %}
+                        <a href="/admin/dashboard" class="nav-link">Панель</a>
+                    {% else %}
+                        <a href="/profile" class="nav-link">Личный кабинет</a>
+                    {% endif %}
+                    <a href="/logout" class="nav-link">Выход</a>
+                {% else %}
+                    <a href="/login" class="nav-link">Вход</a>
+                    <a href="/register" class="btn-grant">Регистрация</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-column">
+                <h4>Шаг Вперёд</h4>
+                <p>Платформа грантовой поддержки социальных, культурных и молодёжных инициатив.</p>
+            </div>
+            <div class="footer-column">
+                <h4>Контакты</h4>
+                <p>8-800-123-45-67</p>
+                <p>support@shagvpered.ru</p>
+            </div>
+            <div class="footer-column">
+                <h4>Информация</h4>
+                <p>© 2026 Все права защищены</p>
+                <a href="#">Политика конфиденциальности</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

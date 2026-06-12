@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Добавление эксперта</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f5f7fa; }
+        header { background: #1e3c72; color: white; padding: 15px 20px; }
+        .container { max-width: 600px; margin: 20px auto; background: white; border-radius: 8px; padding: 30px; }
+        label { display: block; margin-top: 15px; font-weight: bold; }
+        input, select { width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; }
+        .btn { display: inline-block; padding: 10px 20px; background: #1e3c72; color: white; border: none; border-radius: 4px; cursor: pointer; margin-top: 20px; }
+        .btn-back { background: #6c757d; margin-left: 10px; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <header><h1>Добавление эксперта</h1></header>
+    <div class="container">
+        <form method="POST">
+            <label>ФИО</label>
+            <input type="text" name="full_name" required>
+
+            <label>Email</label>
+            <input type="email" name="email" required>
+
+            <label>Области компетенции (можно выбрать несколько)</label>
+            <select name="expertise_areas" multiple size="5">
+                <option value="Цифровые технологии">Цифровые технологии</option>
+                <option value="Медицина">Медицина</option>
+                <option value="Биотехнологии">Биотехнологии</option>
+                <option value="Ресурсосберегающая техника">Ресурсосберегающая техника</option>
+                <option value="Новые материалы и химические технологии">Новые материалы и химические технологии</option>
+                <option value="Новые приборы и интеллектуальные производственные технологии">Новые приборы и интеллектуальные производственные технологии</option>
+                <option value="Креативные индустрии">Креативные индустрии</option>
+            </select>
+
+            <label>Максимальная нагрузка (заявок)</label>
+            <input type="number" name="max_load" value="5">
+
+            <label>Рейтинг (1-5)</label>
+            <input type="number" name="rating" step="0.1" value="5.0">
+
+            <button type="submit" class="btn">Сохранить</button>
+            <a href="/admin/experts" class="btn btn-back">Отмена</a>
+        </form>
+    </div>
+</body>
+</html>

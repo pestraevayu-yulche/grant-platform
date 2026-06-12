@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+
+{% block title %}Итоговый отчет после заслушивания - ВКонкурсе{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="breadcrumbs">
+        <a href="/admin/dashboard?contest_id={{ request.args.get('contest_id', '') }}">← Назад к панели</a>
+        <span>/</span>
+        <span>Итоговый отчет</span>
+    </div>
+
+    <div class="card">
+        <div class="report-header">
+            <h2>Итоговый отчет по результатам заслушивания</h2>
+            <p>Дата формирования: {{ report_date }}</p>
+        </div>
+
+        <!-- Общая статистика -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">{{ stats.total }}</div>
+                <div class="stat-label">Всего проектов</div>
+            </div>
+            <div class="stat-card success">
+                <div class="stat-number">{{ stats.approved }}</div>
+                <div class="stat-label">Рекомендовано</div>
+            </div>
+            <div class="stat-card danger">
+                <div class="stat-number">{{ stats.rejected }}</div>
+                <div class="stat-label">Отклонено</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ stats.avg_score }}%</div>
+                <div class="stat-label">Средний балл</div>
+            </div>
+        </div>
+
+        <!-- Кнопки экспорта -->
+        <div class="action-buttons no-print">
+            <button onclick="window.print()" class="btn btn-secondary">
+                <i class="fas fa-print"></i> Печать отчета
+            </button>
+            <a href="/admin/export_final_report/excel?contest_id={{ request.args.get('contest_id', '') }}" class="btn btn-success">
+                <i class="fas fa-file-excel"></i> Скачать Excel
+            </a>
+            <a href="/admin/export_final_report/pdf?contest_id={{ request.args.get('contest_id', '') }}" class="btn btn-primary">
+                <i class="fas fa-file-pdf"></i> Скачать PDF
+            </a>
+        </div>
+
+        <!-- Детали по проектам -->
+        {% if reports and reports|length > 0 %}
+            {% for report in reports %}
+            <div class="project-report">
+                <div class="project-report-header">
+                    <h3>{{ report.project_name }}</h3>
+                    <span class="status-badge
+                        {% if report.final_status == 'approved' %}status-approved
+                        {% elif report.final_status == 'rejected' %}status-rejected
+                        {% else %}status-review{% endif %}">
+                        {% if report.final_status == 'approved' %}Рекомендован
+                        {% elif report.final_status == 'rejected' %}Отклонен
+                        {% else %}На доработку{% endif %}
+                    </span>
+                </div>
+
+                <div class="project-meta">
+                    <p><i class="fas fa-user"></i> Заявитель: {{ report.applicant_name }}</p>
+                    <p><i class="fas fa-tag"></i> Направление: {{ report.direction }}</p>
+                </div>
+
+                <div class="final-score">
+                    {{ report.final_score }} / 100
+                </div>
+
+                <h4>Оценки экспертной комиссии</h4>
+                <table class="expert-scores-table">
+                    <thead>
+                        <tr>
+                            <th>Эксперт</th>
+                            <th>Актуальность</th>
+                            <th>Новизна</th>
+                            <th>Реализуемость</th>
+                            <th>Команда</th>
+                            <th>Бюджет</th>
+                            <th>Среднее</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for expert in report.expert_scores %}
+                        <tr>
+                            <td><strong>{{ expert.name }}</strong></td>
+                            <td>{{ expert.scores.Актуальность|default('-') }}</td>
+                            <td>{{ expert.scores.Новизна|default('-') }}</td>
+                            <td>{{ expert.scores.Реализуемость|default('-') }}</td>
+                            <td>{{ expert.scores.Команда|default('-') }}</td>
+                            <td>{{ expert.scores.Бюджет|default('-') }}</td>
+                            <td><strong>{{ expert.average }}</strong></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                {% if report.anomalies %}
+                <div class="anomaly-warning">
+                    <strong><i class="fas fa-exclamation-triangle"></i> Обнаружены расхождения в оценках:</strong>
+                    <ul>
+                        {% for anomaly in report.anomalies %}
+                        <li>{{ anomaly }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                {% if report.recommendations %}
+                <div class="recommendations">
+                    <strong><i class="fas fa-lightbulb"></i> Рекомендации комиссии:</strong>
+                    <ul>
+                        {% for rec in report.recommendations %}
+                        <li>{{ rec }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-chart-line" style="font-size: 64px; color: #e2e8f0;"></i>
+            <h3>Нет данных для отчета</h3>
+            <p>Сначала назначьте экспертов и дождитесь оценки проектов</p>
+            <a href="/admin/assign_experts_batch?contest_id={{ request.args.get('contest_id', '') }}" class="btn btn-primary">
+                Назначить экспертов
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.breadcrumbs {
+    margin-bottom: 24px;
+    padding: 12px 0;
+    color: #64748b;
+}
+.breadcrumbs a {
+    color: #7c9bc0;
+    text-decoration: none;
+}
+.report-header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #e2e8f0;
+}
+.report-header h2 {
+    margin-bottom: 8px;
+}
+.report-header p {
+    color: #64748b;
+}
+.stat-card.success .stat-number {
+    color: #2c5e2c;
+}
+.stat-card.danger .stat-number {
+    color: #8b3a3a;
+}
+.project-report {
+    margin-bottom: 40px;
+    padding: 20px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: white;
+}
+.project-report-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e2e8f0;
+}
+.project-report-header h3 {
+    margin: 0;
+}
+.project-meta {
+    margin-bottom: 15px;
+}
+.project-meta p {
+    margin: 5px 0;
+    color: #64748b;
+}
+.project-meta i {
+    width: 20px;
+    color: #7c9bc0;
+}
+.final-score {
+    font-size: 48px;
+    font-weight: bold;
+    color: #1e3c72;
+    text-align: center;
+    margin: 20px 0;
+}
+.expert-scores-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+.expert-scores-table th, .expert-scores-table td {
+    border: 1px solid #e2e8f0;
+    padding: 12px;
+    text-align: center;
+}
+.expert-scores-table th {
+    background: #1e3c72;
+    color: white;
+}
+.anomaly-warning {
+    background: #fff3cd;
+    border-left: 4px solid #ffc107;
+    padding: 15px;
+    margin: 15px 0;
+    border-radius: 8px;
+}
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+}
+.empty-state h3 {
+    margin: 20px 0 10px;
+}
+.empty-state p {
+    color: #64748b;
+    margin-bottom: 24px;
+}
+@media print {
+    .no-print {
+        display: none;
+    }
+    .project-report {
+        break-inside: avoid;
+        box-shadow: none;
+    }
+}
+</style>
+{% endblock %}

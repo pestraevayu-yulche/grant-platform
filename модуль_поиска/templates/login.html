@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход - Вконкурсе</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border: 1px solid #cbd5e1;
+        }
+
+        .login-container:hover {
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .logo h1 {
+            font-size: 28px;
+            font-weight: 500;
+            color: #1e3c72;
+            letter-spacing: -0.3px;
+        }
+
+        .logo p {
+            color: #6c757d;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            transition: all 0.2s ease;
+            font-family: inherit;
+            background: #f8f9fa;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #1e3c72;
+            box-shadow: 0 0 0 2px rgba(30, 60, 114, 0.1);
+            background: #ffffff;
+        }
+
+        .btn {
+            width: 100%;
+            background: #1e3c72;
+            color: white;
+            border: none;
+            padding: 14px;
+            font-size: 15px;
+            font-weight: 500;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn:hover {
+            background: #152c55;
+            transform: translateY(-1px);
+        }
+
+        .error-message {
+            background: #fef2f2;
+            color: #dc2626;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 13px;
+            margin-bottom: 20px;
+            text-align: center;
+            border-left: 3px solid #dc2626;
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 13px;
+            color: #6c757d;
+        }
+
+        .register-link a {
+            color: #1e3c72;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <h1>Вконкурсе</h1>
+            <p>Система поиска проектов для грантовых конкурсов</p>
+        </div>
+
+        <div id="errorMessage" class="error-message" style="display: none;"></div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">Логин</label>
+                <input type="text" id="username" name="username" placeholder="Введите логин" required autofocus>
+            </div>
+            <div class="form-group">
+                <label for="password">Пароль</label>
+                <input type="password" id="password" name="password" placeholder="Введите пароль" required>
+            </div>
+            <button type="submit" class="btn">Войти</button>
+        </form>
+
+        <div class="register-link">
+            Нет аккаунта? <a href="#" id="registerLink">Зарегистрироваться</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.style.display = 'none';
+
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    window.location.href = '/';
+                } else {
+                    errorDiv.textContent = data.error || 'Неверный логин или пароль';
+                    errorDiv.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                errorDiv.textContent = 'Ошибка соединения. Попробуйте позже.';
+                errorDiv.style.display = 'block';
+            }
+        });
+
+        document.getElementById('registerLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            window.location.href = '/register';
+        });
+    </script>
+</body>
+
+</html>
