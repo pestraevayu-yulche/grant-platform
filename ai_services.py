@@ -1,4 +1,4 @@
-# ai_services.py
+# ai_services.py - ОБЛЕГЧЕННАЯ ВЕРСИЯ ДЛЯ RENDER
 import nltk
 import json
 from datetime import datetime, timedelta
@@ -7,6 +7,8 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize, sent_tokenize
 from nltk.probability import FreqDist
 import numpy as np
+import requests
+import os
 
 # Скачиваем данные NLTK (один раз)
 try:
@@ -17,24 +19,40 @@ except LookupError:
     nltk.download('stopwords')
     nltk.download('averaged_perceptron_tagger')
 
-# Загружаем стоп-слова (без моделей, чтобы не было ошибок)
-try:
-    from transformers import pipeline
-    from sentence_transformers import SentenceTransformer, util
+# URL вашего Space на Hugging Face
+HF_SPACE_URL = os.environ.get('HF_SPACE_URL', 'https://YuYulche-grant-platform-ai.hf.space')
 
-    sentiment_pipeline = pipeline("sentiment-analysis", model="blanchefort/rubert-base-cased-sentiment")
-    sentence_model = SentenceTransformer('distiluse-base-multilingual-cased-v2')
-    print("AI модели загружены!")
-except Exception as e:
-    print(f"Ошибка загрузки моделей: {e}")
-    sentiment_pipeline = None
-    sentence_model = None
+# ⚠️ УБИРАЕМ загрузку тяжелых моделей (теперь они в Hugging Face Space)
+# Вместо этого создаем функции-заглушки, которые вызывают API
+def get_sentiment_via_api(text):
+    """Вызов анализа тональности через Hugging Face API"""
+    try:
+        response = requests.post(
+            f'{HF_SPACE_URL}/sentiment',
+            json={'text': text},
+            timeout=30
+        )
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return {'label': 'NEUTRAL', 'score': 0.5}
+    except:
+        return {'label': 'NEUTRAL', 'score': 0.5}
 
-# Русские стоп-слова
-try:
-    russian_stopwords = set(stopwords.words('russian'))
-except:
-    russian_stopwords = set()
+def get_embedding_via_api(text):
+    """Вызов получения эмбеддинга через Hugging Face API"""
+    try:
+        response = requests.post(
+            f'{HF_SPACE_URL}/embed',
+            json={'text': text},
+            timeout=30
+        )
+        if response.status_code == 200:
+            return response.json()['embedding']
+        else:
+            return None
+    except:
+        return None
 
 
 def analyze_field_text(text, field_name, min_length=50, keywords=None):
