@@ -9,6 +9,7 @@ import os
 import json
 from ai_services import ai_validate_application_detailed, generate_hearing_schedule,   auto_assign_experts
 from file_validator import validate_all_documents
+import urllib.parse
 
 app = Flask(__name__)
 
@@ -43,13 +44,24 @@ def allowed_file(filename):
 
 # ================= БАЗА ДАННЫХ =================
 def get_db_connection():
-    return psycopg2.connect(
-        dbname="grants_db",
-        user="postgres",
-        password="1234",
-        host="localhost",
-        port="5432"
-    )
+    # Пробуем получить DATABASE_URL из переменных окружения
+    database_url = os.environ.get('DATABASE_URL')
+    
+    if database_url:
+        # Используем URL от Render
+        conn = psycopg2.connect(database_url)
+        return conn
+    else:
+        # Fallback для локальной разработки
+        return psycopg2.connect(
+            dbname="grants_db",
+            user="postgres",
+            password="1234",
+            host="localhost",
+            port="5432"
+        )
+
+
 
 
 # ================= INIT DB =================
