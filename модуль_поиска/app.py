@@ -699,14 +699,15 @@ def status():
 
 
 if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 5000))
     cert_file = os.path.join(BASE_DIR, 'cert.pem')
     key_file = os.path.join(BASE_DIR, 'key.pem')
     if os.path.exists(cert_file) and os.path.exists(key_file):
         print('Запуск с HTTPS (SSL)')
-        app.run(debug=True, host='0.0.0.0', port=5000, ssl_context=(cert_file, key_file))
+        app.run(debug=True, host='0.0.0.0', port=port, ssl_context=(cert_file, key_file))
     else:
         print('SSL-сертификаты не найдены. Запуск без HTTPS.')
-        app.run(debug=True, host='127.0.0.1', port=5000)
+        app.run(debug=True, host='0.0.0.0', port=port)
 
 
 @app.route('/api/admin_return_url')
