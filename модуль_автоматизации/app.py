@@ -44,15 +44,11 @@ def allowed_file(filename):
 
 # ================= БАЗА ДАННЫХ =================
 def get_db_connection():
-    # Пробуем получить DATABASE_URL из переменных окружения
     database_url = os.environ.get('DATABASE_URL')
-    
     if database_url:
-        # Используем URL от Render
-        conn = psycopg2.connect(database_url)
-        return conn
+        return psycopg2.connect(database_url)
     else:
-        # Fallback для локальной разработки
+        # Для локальной разработки
         return psycopg2.connect(
             dbname="grants_db",
             user="postgres",
