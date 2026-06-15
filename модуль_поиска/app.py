@@ -17,6 +17,7 @@ import sqlite3
 import traceback
 from datetime import datetime
 from typing import Any, Dict, List
+import psycopg2
 
 import requests
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -38,7 +39,7 @@ DATA_DIR = os.path.join(BASE_DIR, 'data')
 USERS_DB_PATH = os.path.join(DATA_DIR, 'users.sqlite3')
 AUTOMATION_API_URL = os.environ.get('AUTOMATION_API_URL', 'http://localhost:8000')
 AUTOMATION_ADMIN_URL = os.environ.get('AUTOMATION_ADMIN_URL', 'http://localhost:8000/admin/dashboard')
-
+DATABASE_URL = os.environ.get('DATABASE_URL')
 
 def get_db_connection():
     os.makedirs(DATA_DIR, exist_ok=True)
