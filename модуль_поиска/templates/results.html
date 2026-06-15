@@ -738,6 +738,273 @@
             background: #f8f9fa;
         }
 
+  /* ==========================================
+   МОБИЛЬНАЯ АДАПТАЦИЯ
+   ========================================== */
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        @media (max-width: 1024px) {
+
+            .container {
+                padding: 16px;
+            }
+
+            .filters-bar {
+                gap: 16px;
+            }
+
+            .filter-group {
+                min-width: calc(50% - 8px);
+            }
+
+            .stats-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .action-buttons {
+                width: 100%;
+                justify-content: flex-start;
+            }
+        }
+
+        @media (max-width: 768px) {
+
+            body {
+                font-size: 14px;
+            }
+
+            .container {
+                padding: 12px;
+            }
+
+            #adminReturnBar {
+                padding: 12px 16px !important;
+            }
+
+            .site-header {
+                padding: 16px;
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .site-header h1 {
+                font-size: 22px;
+            }
+
+            .header-links {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .competition-info-bar {
+                padding: 14px;
+            }
+
+            .filters-bar {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 16px;
+                gap: 14px;
+            }
+
+            .filter-group {
+                width: 100%;
+                min-width: 100%;
+            }
+
+            .source-group {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .directions-filter {
+                gap: 6px;
+            }
+
+            .direction-checkbox-item {
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            .apply-filters {
+                width: 100%;
+            }
+
+            .tabs-container {
+                overflow-x: auto;
+                white-space: nowrap;
+                display: flex;
+                gap: 6px;
+                padding-bottom: 4px;
+            }
+
+            .tab-btn {
+                flex: 0 0 auto;
+                min-width: 220px;
+            }
+
+            .stats-bar {
+                padding: 14px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .action-buttons button {
+                width: 100%;
+            }
+
+            .project-card {
+                padding: 14px;
+            }
+
+            .card-header {
+                flex-direction: column;
+            }
+
+            .project-checkbox {
+                margin-bottom: 10px;
+            }
+
+            .project-title {
+                font-size: 16px;
+                line-height: 1.4;
+            }
+
+            .project-meta {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .project-abstract {
+                font-size: 13px;
+            }
+
+            .project-content a.btn-action,
+            .project-content button.btn-action {
+                width: 100%;
+                text-align: center;
+            }
+
+            .vk-results-section {
+                padding: 16px;
+            }
+
+            .vk-results-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .vk-results-actions {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .vk-results-actions button {
+                width: 100%;
+            }
+
+            .vk-results-table {
+                min-width: 700px;
+            }
+
+            .invite-queue-card {
+                width: 100%;
+                max-width: 100%;
+                max-height: 95vh;
+                border-radius: 12px;
+            }
+
+            .invite-queue-sticky {
+                padding: 16px;
+            }
+
+            .invite-queue-actions {
+                flex-direction: column;
+            }
+
+            .invite-queue-actions button {
+                width: 100%;
+            }
+
+            .invite-queue-row {
+                grid-template-columns: 40px 80px 1fr;
+            }
+
+            .progress-card {
+                width: calc(100% - 20px);
+                padding: 20px;
+            }
+
+            .floating-buttons {
+                bottom: 12px;
+                right: 12px;
+                flex-direction: column;
+            }
+
+            .float-btn {
+                padding: 10px 14px;
+                font-size: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+
+            .container {
+                padding: 10px;
+            }
+
+            .site-header h1 {
+                font-size: 20px;
+            }
+
+            .competition-info-bar h3 {
+                font-size: 16px;
+            }
+
+            .project-title {
+                font-size: 15px;
+            }
+
+            .project-authors,
+            .project-abstract,
+            .results-count {
+                font-size: 12px;
+            }
+
+            .tab-btn {
+                min-width: 180px;
+                font-size: 13px;
+                padding: 10px;
+            }
+
+            .btn-action,
+            .apply-filters,
+            .float-btn {
+                min-height: 44px;
+            }
+
+            .invite-queue-row {
+                grid-template-columns: 1fr;
+                gap: 4px;
+            }
+
+            .vk-results-table {
+                min-width: 600px;
+            }
+        }
+
     </style>
 </head>
 
@@ -871,16 +1138,18 @@
                     </div>
                 </div>
 
-                <table class="vk-results-table" id="vkResultsTable">
-                    <thead>
-                        <tr>
-                            <th>Проект</th>
-                            <th>Автор</th>
-                            <th>Действие</th>
-                        </tr>
-                    </thead>
-                    <tbody id="vkResultsBody"></tbody>
-                </table>
+                <div class="table-wrapper">
+                    <table class="vk-results-table" id="vkResultsTable">
+                        <thead>
+                            <tr>
+                                <th>Проект</th>
+                                <th>Автор</th>
+                                <th>Действие</th>
+                            </tr>
+                        </thead>
+                        <tbody id="vkResultsBody"></tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
