@@ -2198,22 +2198,16 @@ def _contest_to_api_dict(contest):
     }
 
 
-@app.route("/admin/go_to_search")
+@app.route('/admin/go_to_search')
 @admin_required
 def go_to_search():
-    contest_id = request.args.get("contest_id", type=int)
-
-    # Если конкурс в админ-панели не выбран, открываем в модуле поиска страницу выбора конкурса.
-    if not contest_id:
-        return redirect(f"{SCOUTING_BASE_URL.rstrip('/')}/")
-
-    return_url = f"{AUTOMATION_BASE_URL.rstrip('/')}/admin/dashboard?contest_id={contest_id}"
-    search_url = (
-        f"{SCOUTING_BASE_URL.rstrip('/')}/results"
-        f"?external_competition_id={contest_id}"
-        f"&return_url={return_url}"
-    )
-    return redirect(search_url)
+    contest_id = request.args.get('contest_id')
+    # Берём URL из переменной окружения
+    search_base_url = os.environ.get('SCOUTING_BASE_URL', 'http://localhost:5000')
+    
+    if contest_id:
+        return redirect(f"{search_base_url}/results?external_competition_id={contest_id}")
+    return redirect(search_base_url)
 
 
 @app.route("/admin/contests/create", methods=["GET", "POST"])
