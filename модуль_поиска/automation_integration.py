@@ -1,11 +1,14 @@
 import os
 from urllib.parse import quote_plus
-
+import psycopg2
+import json
 import requests
 
 AUTOMATION_API_URL = os.getenv("AUTOMATION_API_URL", "http://localhost:8000")
 AUTOMATION_ADMIN_URL = os.getenv("AUTOMATION_ADMIN_URL", "http://localhost:8000/admin/dashboard")
 INTEGRATION_API_TOKEN = os.getenv("INTEGRATION_API_TOKEN", "")
+
+DATABASE_URL = os.environ.get('DATABASE_URL')
 
 DEFAULT_CRITERIA = [
     "Актуальность",
@@ -16,6 +19,42 @@ DEFAULT_CRITERIA = [
     "Потенциал масштабирования",
 ]
 
+def get_contests_from_db():
+    """Получает конкурсы напрямую из базы данных"""
+    if not DATABASE_URL:
+        return []
+    
+    try:
+        conn = psycopg2.connect(DATABASE_URL)
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT id, name, description, max_amount, duration_months, 
+                   region, application_deadline, directions, status
+            FROM contests 
+            WHERE status = 'active'
+            ORDER BY id
+        """)
+        rows = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        
+        contests = []
+        for row in rows:
+            contests.append({
+                'id': row[0],
+                'name': row[1],
+                'description': row[2] or '',
+                'max_amount': row[3],
+                'duration_months': row[4],
+                'region': row[5],
+                'application_deadline': str(row[6]) if row[6] else None,
+                'directions': row[7] if row[7] else [],
+                'status': row[8] or 'active'
+            })
+        return contests
+    except Exception as e:
+        print(f"Ошибка загрузки конкурсов из БД: {e}")
+        return []
 
 def _headers():
     headers = {"Accept": "application/json"}
@@ -127,12 +166,22 @@ def normalize_external_contest(contest):
 
 
 def get_external_contests():
-    url = f"{AUTOMATION_API_URL.rstrip('/')}/api/scouting/contests"
-    response = requests.get(url, headers=_headers(), timeout=10)
-    response.raise_for_status()
-    data = response.json()
-    raw_contests = data.get("contests") or data.get("competitions") or data.get("items") or []
-    return [normalize_external_contest(item) for item in raw_contests]
+    """Получение конкурсов (сначала пробуем API, потом БД)"""
+    # Пробуем через API (если модуль автоматизации доступен)
+    try:
+        url = f"{AUTOMATION_API_URL.rstrip('/')}/api/scouting/contests"
+        response = requests.get(url, headers=_headers(), timeout=5)
+        if response.status_code == 200:
+            data = response.json()
+            contests = data.get("contests") or data.get("competitions") or data.get("items") or []
+            if contests:
+                return [normalize_external_contest(item) for item in contests]
+    except Exception as e:
+        print(f"API недоступно: {e}")
+    
+    # Если API не ответил, загружаем из базы данных напрямую
+    print("Загрузка конкурсов напрямую из базы данных...")
+    return get_contests_from_db()
 
 
 def load_external_contest(external_contest_id):
