@@ -36,8 +36,8 @@ app.secret_key = os.environ.get('SCOUTING_SECRET_KEY', 'dev-secret-change-me')
 
 DATA_DIR = os.path.join(BASE_DIR, 'data')
 USERS_DB_PATH = os.path.join(DATA_DIR, 'users.sqlite3')
-AUTOMATION_API_URL = os.environ.get('AUTOMATION_API_URL', 'http://127.0.0.1:8000')
-AUTOMATION_ADMIN_URL = os.environ.get('AUTOMATION_ADMIN_URL', 'http://127.0.0.1:8000/admin/dashboard')
+AUTOMATION_API_URL = os.environ.get('AUTOMATION_API_URL', 'http://localhost:8000')
+AUTOMATION_ADMIN_URL = os.environ.get('AUTOMATION_ADMIN_URL', 'http://localhost:8000/admin/dashboard')
 
 
 def get_db_connection():
