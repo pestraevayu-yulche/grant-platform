@@ -10,9 +10,32 @@ import json
 from ai_services import ai_validate_application_detailed, generate_hearing_schedule,   auto_assign_experts
 from file_validator import validate_all_documents
 import urllib.parse
+import requests
+from flask import request, Response
 
 app = Flask(__name__)
 
+@app.route('/search/', defaults={'path': ''})
+@app.route('/search/<path:path>')
+def search_proxy(path):
+    """Прокси для модуля поиска"""
+    # Внутренний адрес модуля поиска (он работает на порту 5000 внутри контейнера)
+    target_url = f"http://localhost:5000/{path}"
+    
+    # Перенаправляем запрос
+    try:
+        if request.method == 'GET':
+            resp = requests.get(target_url, params=request.args, timeout=30)
+        elif request.method == 'POST':
+            resp = requests.post(target_url, json=request.json, data=request.form, timeout=30)
+        else:
+            resp = requests.request(request.method, target_url, timeout=30)
+        
+        # Создаем ответ Flask
+        response = Response(resp.content, status=resp.status_code, content_type=resp.headers.get('content-type'))
+        return response
+    except Exception as e:
+        return f"Ошибка подключения к модулю поиска: {e}", 503
 
 
 # Добавьте эту строку для статических файлов
