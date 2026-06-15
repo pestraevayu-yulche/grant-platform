@@ -402,8 +402,10 @@ def api_logout():
 
 @app.route('/logout')
 def logout():
+    # Очищаем сессию модуля поиска
     session.clear()
-    return redirect(url_for('login_page'))
+    # Перенаправляем на выход из модуля автоматизации
+    return redirect('/logout')
 
 
 
