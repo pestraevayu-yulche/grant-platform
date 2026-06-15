@@ -52,8 +52,9 @@
             <i class="fas fa-download"></i> Скачать отчет
         </a>
         <!-- НОВАЯ КНОПКА - выход на модуль поиска -->
-        <a href="/search/" target="_blank" class="btn btn-info">
-            <i class="fas fa-search"></i> Поиск проектов
+        <a href="/admin/go_to_search{% if selected_contest %}?contest_id={{ selected_contest }}{% endif %}" 
+           class="btn btn-info" target="_blank">
+                <i class="fas fa-search"></i> Поиск проектов
         </a>
     </div>
 
