@@ -3,8 +3,8 @@ from urllib.parse import quote_plus
 
 import requests
 
-AUTOMATION_API_URL = os.getenv("AUTOMATION_API_URL", "http://127.0.0.1:8000")
-AUTOMATION_ADMIN_URL = os.getenv("AUTOMATION_ADMIN_URL", "http://127.0.0.1:8000/admin/dashboard")
+AUTOMATION_API_URL = os.getenv("AUTOMATION_API_URL", "http://localhost:8000")
+AUTOMATION_ADMIN_URL = os.getenv("AUTOMATION_ADMIN_URL", "http://localhost:8000/admin/dashboard")
 INTEGRATION_API_TOKEN = os.getenv("INTEGRATION_API_TOKEN", "")
 
 DEFAULT_CRITERIA = [
