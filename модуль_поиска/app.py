@@ -517,9 +517,13 @@ def api_search_with_filters():
 
 @app.route('/back_to_admin')
 def back_to_admin():
-    """Возврат в админ-панель модуля автоматизации"""
-    automation_admin_url = os.environ.get('AUTOMATION_ADMIN_URL', 'https://grant-platform.onrender.com/admin/dashboard')
-    return redirect(automation_admin_url)
+    contest_id = request.args.get('contest_id', '')
+    # Базовый URL модуля автоматизации (БЕЗ /admin/dashboard)
+    base_url = os.environ.get('AUTOMATION_BASE_URL', 'https://grant-platform.onrender.com')
+    
+    if contest_id:
+        return redirect(f"{base_url}/admin/dashboard?contest_id={contest_id}")
+    return redirect(f"{base_url}/admin/dashboard")
 
 @app.route('/api/search', methods=['POST'])
 @login_required
