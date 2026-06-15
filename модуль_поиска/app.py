@@ -515,6 +515,12 @@ def api_search_with_filters():
     return jsonify({'query': query, 'results_count': len(results), 'results': results})
 
 
+@app.route('/back_to_admin')
+def back_to_admin():
+    """Возврат в админ-панель модуля автоматизации"""
+    automation_admin_url = os.environ.get('AUTOMATION_ADMIN_URL', 'https://grant-platform.onrender.com/admin/dashboard')
+    return redirect(automation_admin_url)
+
 @app.route('/api/search', methods=['POST'])
 @login_required
 def api_search():
