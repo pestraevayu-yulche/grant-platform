@@ -227,7 +227,8 @@ def register():
             cursor.close()
             conn.close()
 
-    return render_template("register.html")
+        return redirect('/login')   
+    return render_template('auth/register.html')
 
 
 @app.route("/logout")
